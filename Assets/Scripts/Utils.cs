@@ -8,7 +8,8 @@ namespace INeverFall
     {
         public static void SetAnimatorTrigger(this Animator animator, AnimatorTrigger trigger)
         {
-            Debug.Log($"SetAnimatorTrigger: {trigger} - {( int )trigger}");
+            //Debug.Log($"SetAnimatorTrigger: {trigger} - {( int )trigger}");
+            
             animator.SetInteger(AnimationID.TriggerNumber, (int)trigger);
             animator.SetTrigger(AnimationID.Trigger);
         }
