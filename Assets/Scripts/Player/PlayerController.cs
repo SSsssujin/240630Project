@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 namespace INeverFall.Player
 {
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerController : MonoBehaviour
+    public partial class PlayerController : MonoBehaviour
     {
         public float MoveSpeed = 5;
         public float MaxForwardSpeed = 5f;
@@ -37,6 +37,11 @@ namespace INeverFall.Player
         
         // Camera
         private GameObject _mainCamera;
+
+        private float _attackTimeDelay;
+        private float _lastAttackTime;
+
+        private Weapon _weapon;
         
         private const float _groundedRayDistance = 1.5f;
         private const float _stickingGravityProportion = 0.3f;
@@ -45,12 +50,15 @@ namespace INeverFall.Player
         private const float _inverseOneEighty = 1f / 180f;
 
         private bool _IsMoveInput => !Mathf.Approximately(_moveDirection.sqrMagnitude, 0f);
+        private bool _CanAttack => Time.time > _lastAttackTime + _attackTimeDelay && _isGrounded;
 
         private void Start()
         {
             _characterController = GetComponent<CharacterController>();
             _animator = GetComponent<Animator>();
+            _weapon = GetComponentInChildren<Weapon>();
             _mainCamera ??= Camera.main?.gameObject;
+            _attackTimeDelay = Utils.AttackDuration(_weapon.WeaponType);
         }
 
         private void FixedUpdate()
@@ -58,6 +66,14 @@ namespace INeverFall.Player
             _CalculateMovement();
             _SetPlayerRotation();
             _MoveCharacter();
+        }
+
+        private void Update()
+        {
+            if (!_isAttackable && _CanAttack)
+            {
+                _isAttackable = true;
+            }
         }
 
         #region  [ Input Method ]
@@ -82,8 +98,33 @@ namespace INeverFall.Player
             }
         }
 
+        private bool _isAttackable;
+
+        private void OnAttack()
+        {
+            if (_isAttackable)
+            {
+                _isAttackable = false;
+                _lastAttackTime = Time.time;
+
+                if (_IsMoveInput)
+                {
+                    // ?
+                    //_animator.SetAnimatorTrigger(AnimatorTrigger.AttackTrigger);
+                    //_animator.SetInteger(AnimationID.Action,1);
+                }
+                else
+                {
+                    _animator.SetAnimatorTrigger(AnimatorTrigger.AttackDualTrigger);
+                    _animator.SetInteger(AnimationID.Action, UnityEngine.Random.Range(1, 12));
+                }
+                
+                _weapon.DoAttack();
+            }
+        }
+
         #endregion
-        
+
         private void _CalculateMovement()
         {
             // Forward movement
@@ -102,19 +143,19 @@ namespace INeverFall.Player
             {
                 _verticalSpeed = -Gravity * _stickingGravityProportion;
 
-                // if (_IsJumpable)
-                // {
-                //     _verticalSpeed = JumpSpeed;
-                //     _isGrounded = false;
-                //                 
-                //     _animator.SetInteger(AnimationID.Jumping, 1);
-                //     _animator.SetAnimatorTrigger(AnimatorTrigger.JumpTrigger);
-                // }
-                //else
-                //{
-                //    _animator.SetInteger(AnimationID.Jumping, 0);
-                //    _animator.SetAnimatorTrigger(AnimatorTrigger.JumpTrigger);
-                //}
+                if (_IsJumpable)
+                {
+                    _verticalSpeed = JumpSpeed;
+                    _isGrounded = false;
+
+                    _animator.SetInteger(AnimationID.Jumping, 1);
+                    _animator.SetAnimatorTrigger(AnimatorTrigger.JumpTrigger);
+                }
+                else
+                {
+                    _animator.SetInteger(AnimationID.Jumping, 0);
+                    _animator.SetAnimatorTrigger(AnimatorTrigger.JumpTrigger);
+                }
             }
             else // Airborne
             {
