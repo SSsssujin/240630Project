@@ -30,10 +30,10 @@ namespace INeverFall
             switch (weapon)
             {
                 case WeaponType.Unarmed:
-                    attackTime = 0.5f;
+                    attackTime = 0.65f;
                     break;
                 case WeaponType.TwoHandSword:
-                    attackTime = 0.75f;
+                    attackTime = 0.5f;
                     break;
             }
 

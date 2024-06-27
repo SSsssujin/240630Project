@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 namespace INeverFall.Player
 {
     [RequireComponent(typeof(CharacterController))]
-    public partial class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour
     {
         public float MoveSpeed = 5;
         public float MaxForwardSpeed = 5f;
@@ -52,6 +52,8 @@ namespace INeverFall.Player
         private bool _IsMoveInput => !Mathf.Approximately(_moveDirection.sqrMagnitude, 0f);
         private bool _CanAttack => Time.time > _lastAttackTime + _attackTimeDelay && _isGrounded;
 
+        public Vector3 PlayerForward => Quaternion.Euler(0.0f, _targetRotationY, 0.0f) * Vector3.forward;
+
         private void Start()
         {
             _characterController = GetComponent<CharacterController>();
@@ -73,6 +75,12 @@ namespace INeverFall.Player
             if (!_isAttackable && _CanAttack)
             {
                 _isAttackable = true;
+            }
+            
+            // Draw forward ray
+            {
+                Ray ray = new Ray(transform.position, PlayerForward);
+                Debug.DrawRay(ray.origin, ray.direction * 100, Color.red);
             }
         }
 
@@ -119,7 +127,7 @@ namespace INeverFall.Player
                     _animator.SetInteger(AnimationID.Action, UnityEngine.Random.Range(1, 12));
                 }
                 
-                _weapon.DoAttack();
+                _weapon.DoAttack(PlayerForward);
             }
         }
 

@@ -20,5 +20,14 @@ namespace INeverFall
             origin.localScale = Vector3.one;
         }
 
+        public static T DemandComponent<T>(this GameObject origin) where T : Component
+        {
+            if (!origin.TryGetComponent<T>(out var component))
+            {
+                component = origin.AddComponent<T>();
+            }
+            return component;
+        }
+
     }
 }

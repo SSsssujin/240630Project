@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using INeverFall.Manager;
 using UnityEngine;
@@ -7,10 +8,12 @@ namespace INeverFall
     public class TwoHandSword : Weapon
     {
         protected override void _SetWeaponType() => _weaponType = WeaponType.TwoHandSword;
-        
 
-        public override void DoAttack()
+        private Vector3 _direction;
+        
+        public override void DoAttack(Vector3 direction)
         {
+            _direction = direction;
             StartCoroutine(nameof(_cStartAttack));
         }
 
@@ -18,11 +21,8 @@ namespace INeverFall
         {
             yield return new WaitForSeconds(_attackTiming);
             
-            Debug.Log("Now");
-            
-            var skill = ResourceManager.Instance.Instantiate("Skill");
-            skill.transform.SetParent(_slashRoot);
-            skill.transform.ResetLocal();
+            var skill = ResourceManager.Instance.Instantiate("TestSlash");
+            skill.DemandComponent<Skill>().Initialize(_slashRoot, _direction);
         }
     }
 }
