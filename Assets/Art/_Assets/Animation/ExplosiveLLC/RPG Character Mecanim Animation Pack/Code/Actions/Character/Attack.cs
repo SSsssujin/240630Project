@@ -1,5 +1,6 @@
 using RPGCharacterAnims.Extensions;
 using RPGCharacterAnims.Lookups;
+using UnityEngine;
 
 namespace RPGCharacterAnims.Actions
 {

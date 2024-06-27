@@ -924,12 +924,20 @@ namespace RPGCharacterAnims
         /// <param name="twoHandedWeapon">If wielding a two-handed weapon.</param>
         public void RunningAttack(Side side, bool leftWeapon, bool rightWeapon, bool dualWeapon, bool twoHandedWeapon)
         {
-			if (side == Side.Left && leftWeapon || twoHandedWeapon)
-			{ animator.SetActionTrigger(AnimatorTrigger.AttackTrigger, 1); }
+	        //Debug.LogError($"{side}, {leftWeapon}, {rightWeapon}, {dualWeapon}, {twoHandedWeapon}");
+
+	        if (side == Side.Left && leftWeapon || twoHandedWeapon)
+	        {
+		        animator.SetActionTrigger(AnimatorTrigger.AttackTrigger, 1);
+		        Debug.Log("HHH");
+	        }
 			else if (side == Side.Right && rightWeapon)
 			{ animator.SetActionTrigger(AnimatorTrigger.AttackTrigger, 4); }
 			else if (side == Side.Dual && dualWeapon)
-			{ animator.SetActionTrigger(AnimatorTrigger.AttackDualTrigger, 1); }
+			{
+				animator.SetActionTrigger(AnimatorTrigger.AttackDualTrigger, 1);
+				Debug.Log("RA");
+			}
 			else if (hasNoWeapon) {
 				animator.SetSide(side);
 				animator.SetActionTrigger(AnimatorTrigger.AttackTrigger, 1);
