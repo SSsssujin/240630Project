@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 767eaeb989184ac0af68866f668d2611
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 176573
+  packageName: Giant Golem AnimSet
+  packageVersion: 1.3
+  assetPath: Assets/Gient_Golem_AnimSet/Ect/AnimatorContrl/atk_dash.controller
+  uploadId: 530099

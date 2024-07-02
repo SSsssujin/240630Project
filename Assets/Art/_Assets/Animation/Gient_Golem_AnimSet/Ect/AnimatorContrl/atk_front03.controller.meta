@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 90e9cbdefc826f642a32715a48f09816
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 176573
+  packageName: Giant Golem AnimSet
+  packageVersion: 1.3
+  assetPath: Assets/Gient_Golem_AnimSet/Ect/AnimatorContrl/atk_front03.controller
+  uploadId: 530099
