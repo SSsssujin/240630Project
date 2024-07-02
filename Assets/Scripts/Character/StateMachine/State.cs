@@ -8,13 +8,6 @@ namespace INeverFall
 {
     public abstract class State
     {
-        protected Boss Character;
-        
-        protected State(Boss character)
-        {
-            Character = character;
-        }
-        
         public abstract void Enter();
         public abstract void Update();
         public abstract void Exit();

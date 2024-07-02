@@ -5,22 +5,22 @@ using UnityEngine;
 
 namespace INeverFall.Monster
 {
-    /*
-     *  State Machine for FortGolem
-     */
+    /** State Machine for Boss - FortGolem **/
     public class BossStateMachine : StateMachine
     {
         public readonly IdleState IdleState;
         public readonly TraceState TraceState;
+        public readonly AttackState AttackState;
         
-        private Boss _controller;
+        private BossMonster _controller;
         
-        public BossStateMachine(Boss controller)
+        public BossStateMachine(BossMonster controller)
         {
             _controller = controller;
             
             IdleState = new IdleState(controller);
             TraceState = new TraceState(controller);
+            AttackState = new AttackState(controller);
         }
     }
 }

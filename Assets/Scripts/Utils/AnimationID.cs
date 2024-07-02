@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace INeverFall
+namespace INeverFall.Player
 {
     public static class AnimationID
     {
@@ -24,5 +24,13 @@ namespace INeverFall
         AttackTrigger = 4,
         AttackDualTrigger = 6,
         JumpTrigger = 18,
+    }
+}
+
+namespace INeverFall.Monster
+{
+    public static class AnimationID
+    {
+        public static readonly int IsMoving = Animator.StringToHash("IsMoving");
     }
 }

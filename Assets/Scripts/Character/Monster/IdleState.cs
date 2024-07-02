@@ -7,35 +7,32 @@ namespace INeverFall.Monster
 {
     public class IdleState : State
     {
+        private BossMonster _controller;
         private PlayerCharacter _player;
 
-        public IdleState(Boss character) : base(character)
+        private BossStateMachine _stateMachine;
+
+        public IdleState(BossMonster controller)
         {
-            
+            _controller = controller;
         }
         
         public override void Enter()
         {
-            if (_TryFindCharacter(out _player))
-            {
-                
-            }
+            _stateMachine = _controller.StateMachine;
         }
 
         public override void Update()
         {
-
+            if (_controller.Target is not null)
+            {
+                _stateMachine.TransitionTo(_stateMachine.TraceState);
+            }
         }
 
         public override void Exit()
         {
             
-        }
-
-        private bool _TryFindCharacter(out PlayerCharacter player)
-        {
-            player = Object.FindFirstObjectByType<PlayerCharacter>();
-            return player != null;
         }
     }
 }

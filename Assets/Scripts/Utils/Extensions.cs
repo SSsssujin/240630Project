@@ -5,12 +5,12 @@ namespace INeverFall
 
     public static class Extensions
     {
-        public static void SetAnimatorTrigger(this Animator animator, AnimatorTrigger trigger)
+        public static void SetAnimatorTrigger(this Animator animator, Player.AnimatorTrigger trigger)
         {
             //Debug.Log($"SetAnimatorTrigger: {trigger} - {( int )trigger}");
             
-            animator.SetInteger(AnimationID.TriggerNumber, (int)trigger);
-            animator.SetTrigger(AnimationID.Trigger);
+            animator.SetInteger(Player.AnimationID.TriggerNumber, (int)trigger);
+            animator.SetTrigger(Player.AnimationID.Trigger);
         }
 
         public static void ResetLocal(this Transform origin)
@@ -29,5 +29,19 @@ namespace INeverFall
             return component;
         }
 
+        public static Transform FindChildRecursively(this Transform origin, string name)
+        {
+            if (origin.name.Equals(name))
+                return origin;
+
+            foreach (Transform child in origin)
+            {
+                Transform result = child.FindChildRecursively(name);
+                if (result != null)
+                    return result;
+            }
+
+            return null;
+        }
     }
 }
