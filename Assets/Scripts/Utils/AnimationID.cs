@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,5 +33,24 @@ namespace INeverFall.Monster
     public static class AnimationID
     {
         public static readonly int IsMoving = Animator.StringToHash("IsMoving");
+        public static readonly int AttackTrigger = Animator.StringToHash("AttackTrigger");
+        public static readonly int Attack = Animator.StringToHash("Attack");
+    }
+
+    // BossAnimation enum을 파라미터로 각 애니메이션의 이름을 가져올 수 있다.
+    // 자세한 것은 Utils 참고
+    // 각 int 값은 Animation 트랜지션 조건이니까 잘 관리해 줘야 된다.  
+    public enum BossAnimation
+    {
+        None = -1,
+        // 추후 다른 애니메이션도 추가하기 (필요 시?)
+        
+        // Melee
+        GroundAttack = 0,
+        ArmSwingAttack = 1,
+        
+        // Long range
+        Dash = 5,
+        ThrowStone = 6,
     }
 }

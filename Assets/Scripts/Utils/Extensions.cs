@@ -1,8 +1,8 @@
+using INeverFall.Monster;
 using UnityEngine;
 
 namespace INeverFall
 {
-
     public static class Extensions
     {
         public static void SetAnimatorTrigger(this Animator animator, Player.AnimatorTrigger trigger)
@@ -42,6 +42,25 @@ namespace INeverFall
             }
 
             return null;
+        }
+
+        public static bool IsSpecificAnimationPlaying(this Animator animator, Monster.BossAnimation animationType, int layerIndex = 0)
+        {
+            string animationName = Utils.GetBossAttackAnimationName(animationType);
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
+            return stateInfo.IsName(animationName);
+        }
+        
+        public static float GetCurrentAnimationLength(this Animator animator, int layerIndex = 0)
+        {
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
+            return stateInfo.length;
+        }
+
+        public static void PlayAttackAnimation(this Animator animator, Monster.BossAnimation animation)
+        {
+            animator.SetTrigger(Monster.AnimationID.AttackTrigger);
+            animator.SetInteger(Monster.AnimationID.Attack, (int)animation);
         }
     }
 }

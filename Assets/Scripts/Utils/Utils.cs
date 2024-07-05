@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using INeverFall.Monster;
 using UnityEngine;
 
 namespace INeverFall
@@ -38,6 +40,19 @@ namespace INeverFall
             }
 
             return attackTime;
+        }
+
+        public static string GetBossAttackAnimationName(Monster.BossAnimation animation)
+        {
+            string name = animation switch
+            {
+                BossAnimation.GroundAttack => "atk_ground02",
+                BossAnimation.ArmSwingAttack => "atk_armSwing",
+                BossAnimation.Dash => "atk_dash",
+                BossAnimation.ThrowStone => "atk_throwStone",
+                _ => throw new ArgumentOutOfRangeException(nameof(animation), animation, null)
+            };
+            return name;
         }
     }
 }

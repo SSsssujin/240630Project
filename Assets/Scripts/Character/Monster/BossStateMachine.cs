@@ -10,7 +10,9 @@ namespace INeverFall.Monster
     {
         public readonly IdleState IdleState;
         public readonly TraceState TraceState;
-        public readonly AttackState AttackState;
+        public readonly FrontAttackState FrontAttackState;
+        public readonly DashAttackState DashAttackState;
+        public readonly ThrowStoneAttackState ThrowStoneAttackState;
         
         private BossMonster _controller;
         
@@ -20,7 +22,9 @@ namespace INeverFall.Monster
             
             IdleState = new IdleState(controller);
             TraceState = new TraceState(controller);
-            AttackState = new AttackState(controller);
+            FrontAttackState = new FrontAttackState(controller);
+            DashAttackState = new DashAttackState(controller);
+            ThrowStoneAttackState = new ThrowStoneAttackState(controller);
         }
     }
 }
