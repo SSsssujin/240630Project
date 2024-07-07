@@ -8,9 +8,9 @@ namespace INeverFall.Manager
 {
     public class ResourceManager : Singleton<ResourceManager>
     {
-        public GameObject Instantiate(string key)
+        public GameObject Instantiate(string key, Transform parent = null)
         {
-            return Addressables.InstantiateAsync(key).WaitForCompletion();
+            return Addressables.InstantiateAsync(key, parent).WaitForCompletion();
         }
     }
 }

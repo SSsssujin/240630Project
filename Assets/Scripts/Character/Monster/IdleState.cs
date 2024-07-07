@@ -39,7 +39,7 @@ namespace INeverFall.Monster
                     _stateMachine.TransitionTo(_stateMachine.DashAttackState);
                     return;
                 }
-                else if (random == 1)
+                else if (random == 1 && _stateMachine.ThrowStoneAttackState.IsReady)
                 {
                     _stateMachine.TransitionTo(_stateMachine.ThrowStoneAttackState);
                     return;

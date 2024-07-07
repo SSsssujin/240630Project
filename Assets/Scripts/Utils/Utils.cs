@@ -54,5 +54,47 @@ namespace INeverFall
             };
             return name;
         }
+        
+        public static AnimationClip GetAnimationClipByName(Animator animator, string clipName)
+        {
+            RuntimeAnimatorController ac = animator.runtimeAnimatorController;
+
+            foreach (var clip in ac.animationClips)
+            {
+                Debug.Log(clip.name);
+                
+                if (String.Equals(clip.name, clipName))
+                {
+                    return clip;
+                }
+            }
+            return null;
+        }
+        
+        public static AnimationClip GetAnimationClipByType(Animator animator, BossAnimation animation)
+        {
+            RuntimeAnimatorController ac = animator.runtimeAnimatorController;
+            string clipName = GetBossAttackAnimationName(animation);
+            foreach (var clip in ac.animationClips)
+            {
+                if (String.Equals(clip.name, clipName))
+                {
+                    return clip;
+                }
+            }
+            return null;
+        }
+        
+        public static void AddAnimationEvent(AnimationClip clip, string functionName, float time)
+        {
+            var animationEvent = new AnimationEvent
+            {
+                functionName = functionName,
+                time = time
+            };
+            clip.AddEvent(animationEvent);
+        }
     }
+    
+    
 }

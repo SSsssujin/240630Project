@@ -8,6 +8,7 @@ public class GameManager : Singleton<GameManager>
     protected override void Awake()
     {
         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
     
     private void Update()

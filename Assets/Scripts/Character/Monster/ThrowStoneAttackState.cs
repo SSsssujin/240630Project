@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using INeverFall.Monster;
@@ -7,32 +8,39 @@ namespace INeverFall.Monster
 {
     public class ThrowStoneAttackState : AttackState
     {
-        private float _entranceTimer = 0;
-        
         public ThrowStoneAttackState(BossMonster controller) : base(controller)
         {
+            _animation = BossAnimation.ThrowStone;
         }
 
         protected override void _Enter()
         {
-            _controller.Animator.PlayAttackAnimation(BossAnimation.ThrowStone);
         }
 
         protected override void _Update()
         {
-            _entranceTimer += Time.deltaTime;
-
-            if (!_controller.Animator.IsSpecificAnimationPlaying(BossAnimation.ThrowStone)
-                && _entranceTimer > _controller.Animator.GetCurrentAnimationLength())
-            {
-                _controller.StateMachine.TransitionTo(_controller.StateMachine.IdleState);
-            }
+            // // Define a small epsilon value to create a time range for comparison
+            // float epsilon = 0.005f;
+            //
+            // if (Mathf.Abs(_entranceTimer - 1.0f) < epsilon)
+            // {
+            //     ActionStarted?.Invoke();
+            // }
+            // if (Mathf.Abs(_entranceTimer - 4.75f) < epsilon)
+            // {
+            //     StoneThrown?.Invoke();
+            // }
         }
 
         protected override void _Exit()
         {
-            _entranceTimer = 0;
+            
         }
+        
+        //private void 
+
+        public event Action ActionStarted;
+        public event Action StoneThrown;
 
         protected override float CooldownTime { get; set; } = 30f;
     }
