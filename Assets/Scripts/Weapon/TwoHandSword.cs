@@ -10,10 +10,13 @@ namespace INeverFall
         protected override void _SetWeaponType() => _weaponType = WeaponType.TwoHandSword;
 
         private Vector3 _direction;
+        private CharacterBase _attacker;
         
-        public override void DoAttack(Vector3 direction)
+        public override void DoAttack(CharacterBase attacker, Vector3 direction)
         {
+            _attacker = attacker;
             _direction = direction;
+            
             StartCoroutine(nameof(_cStartAttack));
         }
 
@@ -22,7 +25,7 @@ namespace INeverFall
             yield return new WaitForSeconds(_attackTiming);
             
             var skill = ResourceManager.Instance.Instantiate("TestSlash");
-            skill.DemandComponent<Skill>().Initialize(_slashRoot, _direction);
+            skill.DemandComponent<SlashSkill>().Create(_attacker, _slashRoot, _direction);
         }
     }
 }

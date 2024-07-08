@@ -1,24 +1,25 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using INeverFall;
 using UnityEngine;
 
-public class BossStone : MonoBehaviour
+public class BossStone : Skill
 {
-    private const float _speed = 50f;
-    
-    private bool _isFlying;
     private Vector3 _direction;
     private Rigidbody _rigidbody;
-
-    private void Start()
+    
+    protected override void _Initialize(CharacterBase attacker, float speed, int attackPower)
     {
+        gameObject.layer = Layer.Rock;
         _rigidbody = GetComponent<Rigidbody>();
-        gameObject.SetActive(false);
+        _speed = speed;
+        _attacker = attacker;
     }
-
-    public void Initialize(Vector3 throwDirection)
+    
+    public void Create(CharacterBase attacker, Vector3 throwDirection)
     {
+        _Initialize(attacker, 50, attacker.AttackPower);
         _rigidbody.isKinematic = true;
         _direction = throwDirection;
         gameObject.SetActive(true);

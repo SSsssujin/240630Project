@@ -7,5 +7,6 @@ namespace INeverFall.Monster
 {
     public class Monster : CharacterBase
     {
+
     }
 }

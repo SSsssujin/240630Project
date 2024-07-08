@@ -3,7 +3,14 @@ using System.Collections.Generic;
 using INeverFall;
 using UnityEngine;
 
-public class PlayerCharacter : CharacterBase
+namespace INeverFall.Player
 {
-
+    public class PlayerCharacter : CharacterBase
+    {
+        protected override void Start()
+        {
+            _maxHp = _hp = 100;
+            _attackPower = 100;
+        }
+    }
 }

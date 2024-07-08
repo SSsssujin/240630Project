@@ -1,4 +1,5 @@
 using INeverFall.Manager;
+using INeverFall.Player;
 using UnityEngine;
 using UnityEngine.AI;
 using Vector2 = UnityEngine.Vector2;
@@ -25,6 +26,7 @@ namespace INeverFall.Monster
         2. 도는 중에도 애니메이션 재생하기
         3. Dash 중간에 애니메이션 안 끊김
      */
+    
     [RequireComponent(typeof(CharacterController))]
     public partial class BossMonster : Monster
     {
@@ -42,16 +44,29 @@ namespace INeverFall.Monster
         private BossStateMachine _stateMachine;
         private BossStone _stone;
 
+        public event System.Action<float> HealthChanged;
+
+        protected override void _OnDamage()
+        {
+            // Notify to presenter
+            var currentHpRate = (float)_hp / _maxHp;
+            HealthChanged?.Invoke(currentHpRate);
+        }
+
         private void _AddAnimationEvents()
         {
             var animationClip = Utils.GetAnimationClipByType(_animator, BossAnimation.ThrowStone);
-            Utils.AddAnimationEvent(animationClip, nameof(_StoneCreated), 1.25f);
-            Utils.AddAnimationEvent(animationClip, nameof(_StoneThrown), 4.75f);
+            animationClip.AddAnimationEvent(nameof(_StoneCreated), 1.25f);
+            animationClip.AddAnimationEvent(nameof(_StoneThrown), 4.75f);
         }
         
         private void _StoneCreated()
         {
-            _stone.Initialize((transform.forward + (-transform.up * 0.2f)).normalized);
+            _stone = ResourceManager.Instance.Instantiate("Rock", _leftHandTransform)
+                .DemandComponent<BossStone>();
+            var mTransform = transform;
+            Vector3 stoneThrowDirection = (mTransform.forward + -mTransform.up * 0.2f).normalized;
+            _stone.Create(this, stoneThrowDirection);
         }
 
         private void _StoneThrown()
@@ -138,7 +153,7 @@ namespace INeverFall.Monster
     // Event functions
     public partial class BossMonster
     {
-        private void Start()
+        protected override void Start()
         {
             // Caching
             _eyesTransform = transform.FindChildRecursively("Eyes");
@@ -158,8 +173,10 @@ namespace INeverFall.Monster
             _navMeshAgent.updateRotation = true;
             
             // Additional objects
-            _stone = ResourceManager.Instance.Instantiate("Rock", _leftHandTransform).DemandComponent<BossStone>();
             _AddAnimationEvents();
+            
+            // Initialize variables
+            _maxHp = _hp = 10000;
         }
 
         private void Update()

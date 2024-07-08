@@ -62,5 +62,15 @@ namespace INeverFall
             animator.SetTrigger(Monster.AnimationID.AttackTrigger);
             animator.SetInteger(Monster.AnimationID.Attack, (int)animation);
         }
+
+        public static void AddAnimationEvent(this AnimationClip clip, string functionName, float time)
+        {
+            var animationEvent = new AnimationEvent
+            {
+                functionName = functionName,
+                time = time
+            };
+            clip.AddEvent(animationEvent);
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace INeverFall
         
         public void TransitionTo(State nextState)
         {
-            Debug.LogError("Next state : " + nextState);
+            //Debug.LogError("Next state : " + nextState);
         
             CurrentState.Exit();
             CurrentState = nextState;

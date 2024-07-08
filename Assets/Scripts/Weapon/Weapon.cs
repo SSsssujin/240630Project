@@ -16,7 +16,7 @@ namespace INeverFall
         }
 
         protected abstract void _SetWeaponType();
-        public abstract void DoAttack(Vector3 direction);
+        public abstract void DoAttack(CharacterBase attacker, Vector3 direction);
         
         public WeaponType WeaponType => _weaponType;
         protected Transform _slashRoot => transform.Find("Slash");

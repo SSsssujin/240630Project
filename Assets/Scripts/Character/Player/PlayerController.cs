@@ -42,6 +42,7 @@ namespace INeverFall.Player
         private float _lastAttackTime;
 
         private Weapon _weapon;
+        private PlayerCharacter _playerCharacter;
         
         private const float _groundedRayDistance = 1.5f;
         private const float _stickingGravityProportion = 0.3f;
@@ -56,6 +57,7 @@ namespace INeverFall.Player
 
         private void Start()
         {
+            _playerCharacter = GetComponent<PlayerCharacter>();
             _characterController = GetComponent<CharacterController>();
             _animator = GetComponent<Animator>();
             _weapon = GetComponentInChildren<Weapon>();
@@ -127,7 +129,7 @@ namespace INeverFall.Player
                     _animator.SetInteger(AnimationID.Action, UnityEngine.Random.Range(1, 12));
                 }
                 
-                _weapon.DoAttack(PlayerForward);
+                _weapon.DoAttack(_playerCharacter, PlayerForward);
             }
         }
 

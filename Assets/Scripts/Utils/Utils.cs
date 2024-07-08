@@ -8,6 +8,7 @@ namespace INeverFall
 {
     public static class Utils
     {
+
         public static float AttackDuration(WeaponType weapon)
 		{
 			float duration = 1f;
@@ -84,17 +85,18 @@ namespace INeverFall
             }
             return null;
         }
-        
-        public static void AddAnimationEvent(AnimationClip clip, string functionName, float time)
-        {
-            var animationEvent = new AnimationEvent
-            {
-                functionName = functionName,
-                time = time
-            };
-            clip.AddEvent(animationEvent);
-        }
     }
     
-    
+    public static class Layer
+    {
+        public static int None = 0;
+        
+        public static int Player = 3;
+
+        public static int Enemy = 6;
+        public static int Rock = 7;
+        public static int TempCast = 8;
+        public static int Walkable = 9;
+    }
+
 }

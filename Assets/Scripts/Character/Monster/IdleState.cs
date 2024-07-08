@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using INeverFall;
+using INeverFall.Player;
 using Unity.VisualScripting;
 using UnityEngine;
 
