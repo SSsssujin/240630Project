@@ -78,12 +78,6 @@ namespace INeverFall.Player
             {
                 _isAttackable = true;
             }
-            
-            // Draw forward ray
-            {
-                Ray ray = new Ray(transform.position, PlayerForward);
-                Debug.DrawRay(ray.origin, ray.direction * 100, Color.red);
-            }
         }
 
         #region  [ Input Method ]

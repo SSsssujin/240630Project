@@ -10,5 +10,10 @@ namespace INeverFall.Manager
         {
             return Addressables.InstantiateAsync(key, parent).WaitForCompletion();
         }
+
+        public void Destroy(GameObject gameObject)
+        {
+            Addressables.ReleaseInstance(gameObject);
+        }
     }
 }

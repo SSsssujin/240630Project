@@ -10,6 +10,7 @@ namespace INeverFall.Monster
     {
         protected readonly BossMonster _controller;
 
+        protected bool _isCoolTimeEnded = true;
         protected float _entranceTimer = 0;
         protected BossAnimation _animation;
 
@@ -60,7 +61,7 @@ namespace INeverFall.Monster
             {
                 _controller.StopCoroutine(_coolTimeCoroutine);
                 _coolTimeCoroutine = null;
-                IsReady = false;
+                _isCoolTimeEnded = false;
             }
         }
 
@@ -68,9 +69,9 @@ namespace INeverFall.Monster
         {
             _coolTimeWFS ??= new WaitForSeconds(CooldownTime);
 
-            IsReady = false;
+            _isCoolTimeEnded = false;
             yield return _coolTimeWFS;
-            IsReady = true;
+            _isCoolTimeEnded = true;
 
             // Debug.Log(this.GetType().Name + " is ready");
         }
@@ -91,6 +92,6 @@ namespace INeverFall.Monster
         // 각 Attack State의 쿨타임을 반드시 설정해주기 위해 abstract 프로퍼티로
         protected abstract float CooldownTime { get; set; }
 
-        public bool IsReady { get; private set; } = true;
+        public virtual bool IsReady { get; protected set; } = true;
     }
 }

@@ -31,7 +31,7 @@ namespace INeverFall.Monster
     public partial class BossMonster : Monster
     {
         private Transform _eyesTransform;
-        private Transform _leftHandTransform;
+        private Transform _rockTransform;
         
         private Vector3 _spawnPosition;
         private Vector2 _velocity;
@@ -62,11 +62,9 @@ namespace INeverFall.Monster
         
         private void _StoneCreated()
         {
-            _stone = ResourceManager.Instance.Instantiate("Rock", _leftHandTransform)
-                .DemandComponent<BossStone>();
-            var mTransform = transform;
-            Vector3 stoneThrowDirection = (mTransform.forward + -mTransform.up * 0.2f).normalized;
-            _stone.Create(this, stoneThrowDirection);
+            _stone = ResourceManager.Instance.Instantiate("Rock", _rockTransform).DemandComponent<BossStone>();
+            Vector3 thrownDirection = (_player.transform.position - transform.position).normalized;
+            _stone.Create(this, thrownDirection, _player);
         }
 
         private void _StoneThrown()
@@ -96,11 +94,12 @@ namespace INeverFall.Monster
             }
 
             float distanceThreshold = 1f;
-            bool shouldMove = _velocity.magnitude > 0.5f &&
-                              _navMeshAgent.remainingDistance + distanceThreshold >
-                              _navMeshAgent.stoppingDistance;
+            bool shouldMove =_velocity.magnitude > 0.5f &&
+                               _navMeshAgent.remainingDistance + distanceThreshold >
+                               _navMeshAgent.stoppingDistance;
+                              //|| _IsRotating();
 
-            _animator.SetBool(AnimationID.IsMoving, shouldMove);
+            //_animator.SetBool(AnimationID.IsMoving, shouldMove);
 
             // To avoid obstacle invasion
             float deltaMagnitude = worldDeltaPosition.magnitude;
@@ -112,6 +111,29 @@ namespace INeverFall.Monster
                     smooth);
             }
         }
+
+        private bool _IsTargetWithinDistance(float distance)
+        {
+            var bossPosition = transform.position;
+            var playerPosition = Target.transform.position;
+            
+            bool inDistance =  Vector3.Distance(bossPosition, playerPosition) < distance;
+            return inDistance;
+        }
+
+        private bool _IsTargetWithinAttackAngle()
+        {
+            var bossPosition = transform.position;
+            var playerPosition = Target.transform.position;
+            
+            var directionToPlayer = (playerPosition - bossPosition).normalized;
+            float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
+            bool inAngle = angleToPlayer < MaxAttackAngle;
+            return inAngle;
+        }
+
+        public bool IsTargetWithinDistance(float a) => _IsTargetWithinDistance(a);
+        public bool IsTargetWithinAttackAngle => _IsTargetWithinAttackAngle();
 
         // [보충]
         // Penetrating the ground collider 하는 것을 방지하기 위함
@@ -142,13 +164,23 @@ namespace INeverFall.Monster
             GroundAttackHandPosition = null;
         }
 
-        public float AttackDistance { get; private set; } = 10;
+        public bool IsTargetWithinAttackRange => _IsTargetWithinDistance(AttackDistance) && _IsTargetWithinAttackAngle();
+        public float AttackDistance { get; private set; } = 10;        
+        public float MaxAttackAngle { get; private set; } = 45.0f;
         public Vector3? GroundAttackHandPosition { private get; set; }
         public PlayerCharacter Target => _player;
         public Animator Animator => _animator;
         public NavMeshAgent NavMeshAgent => _navMeshAgent;
         public BossStateMachine StateMachine => _stateMachine;
     }
+    
+    /*
+     * 문제점.
+     * NevMesh로 보스 로테이션을 업데이트 하는데,
+     * 현재 TraceState에서만 NevMesh가 업데이트 됨.
+     * 꾸준히 보스의 방향을 플레이어 쪽으로 돌려야 함.
+     * => Dash 쿨타임 줄이고 AnimationEvent 추가해서 휙 돌때 로테이션 돌려버리자
+     */
 
     // Event functions
     public partial class BossMonster
@@ -157,7 +189,7 @@ namespace INeverFall.Monster
         {
             // Caching
             _eyesTransform = transform.FindChildRecursively("Eyes");
-            _leftHandTransform = transform.FindChildRecursively("Rock");
+            _rockTransform = transform.FindChildRecursively("Rock");
             _spawnPosition = transform.position;
             _navMeshAgent = GetComponent<NavMeshAgent>();
             _animator = GetComponent<Animator>();
@@ -165,7 +197,7 @@ namespace INeverFall.Monster
             
             // State machine
             _stateMachine = new BossStateMachine(this);
-            _stateMachine.Initialize(_stateMachine.ThrowStoneAttackState);
+            _stateMachine.Initialize(_stateMachine.IdleState);
             
             // Locomotion setting
             _animator.applyRootMotion = true;
@@ -204,6 +236,28 @@ namespace INeverFall.Monster
             if (!_animator) return;
 
             //_AdjustAttackingHandPosition();
+        }
+        
+        private void OnDrawGizmos()
+        {
+            if (Target == null)
+                return;
+            
+            Vector3 bossPosition = transform.position;
+            Vector3 forward = transform.forward;
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(bossPosition, AttackDistance);
+
+            Vector3 rightLimit = Quaternion.Euler(0, MaxAttackAngle, 0) * forward * AttackDistance;
+            Vector3 leftLimit = Quaternion.Euler(0, -MaxAttackAngle, 0) * forward * AttackDistance;
+
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawLine(bossPosition, bossPosition + rightLimit);
+            Gizmos.DrawLine(bossPosition, bossPosition + leftLimit);
+
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(bossPosition, Target.transform.position);
         }
     }
 }

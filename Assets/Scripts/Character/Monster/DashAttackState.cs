@@ -19,7 +19,7 @@ namespace INeverFall.Monster
 
         protected override void _Update()
         {
-
+            _controller.NavMeshAgent.SetDestination(_controller.Target.transform.position);
         }
 
         protected override void _Exit()
@@ -27,6 +27,8 @@ namespace INeverFall.Monster
             
         }
 
-        protected override float CooldownTime { get; set; } = 25f;
+        protected override float CooldownTime { get; set; } = 10;
+
+        public override bool IsReady => _isCoolTimeEnded && !_controller.IsTargetWithinDistance(_controller.AttackDistance);
     }
 }

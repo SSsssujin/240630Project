@@ -9,7 +9,7 @@ namespace INeverFall.Monster
     public class TraceState : State
     {
         private readonly BossMonster _controller;
-
+        
         public TraceState(BossMonster controller)
         {
             _controller = controller;
@@ -17,20 +17,24 @@ namespace INeverFall.Monster
 
         public override void Enter()
         {
-            
+            _controller.Animator.SetBool(AnimationID.IsMoving, true);
         }
 
         public override void Update()
         {
             _UpdatePosition();
-
-            if (_HasReachedDestination())
+            
+            if (_controller.StateMachine.FrontAttackState.IsReady)
             {
-                _controller.StateMachine.TransitionTo(_controller.StateMachine.IdleState);
+                _controller.StateMachine.TransitionTo(_controller.StateMachine.FrontAttackState);
             }
             else if (_controller.StateMachine.DashAttackState.IsReady)
             {
                 _controller.StateMachine.TransitionTo(_controller.StateMachine.DashAttackState);
+            }
+            else if (_controller.StateMachine.ThrowStoneAttackState.IsReady)
+            {
+                _controller.StateMachine.TransitionTo(_controller.StateMachine.ThrowStoneAttackState);
             }
         }
 

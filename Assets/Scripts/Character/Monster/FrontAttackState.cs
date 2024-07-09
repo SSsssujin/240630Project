@@ -47,7 +47,7 @@ namespace INeverFall.Monster
         }
 
         protected override float CooldownTime { get; set; } = 0f;
-
-        public bool IsAvailable => CooldownTime == 0;
+        
+        public override bool IsReady => _isCoolTimeEnded && _controller.IsTargetWithinAttackRange;
     }
 }

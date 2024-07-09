@@ -87,16 +87,15 @@ namespace INeverFall
         }
     }
     
-    public static class Layer
+    public struct Layer
     {
-        public static int None = 0;
-        
-        public static int Player = 3;
-
-        public static int Enemy = 6;
-        public static int Rock = 7;
-        public static int TempCast = 8;
-        public static int Walkable = 9;
+        public const int None = 0;
+        public const int Player = 3;
+        public const int Enemy = 6;
+        public const int Rock = 7;
+        public const int TempCast = 8;
+        public const int Walkable = 9;
+        public const int Environment = 10;
     }
 
 }

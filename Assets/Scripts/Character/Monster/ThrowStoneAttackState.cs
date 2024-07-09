@@ -8,6 +8,8 @@ namespace INeverFall.Monster
 {
     public class ThrowStoneAttackState : AttackState
     {
+        private const float _attackDistance = 20f;
+        
         public ThrowStoneAttackState(BossMonster controller) : base(controller)
         {
             _animation = BossAnimation.ThrowStone;
@@ -19,29 +21,18 @@ namespace INeverFall.Monster
 
         protected override void _Update()
         {
-            // // Define a small epsilon value to create a time range for comparison
-            // float epsilon = 0.005f;
-            //
-            // if (Mathf.Abs(_entranceTimer - 1.0f) < epsilon)
-            // {
-            //     ActionStarted?.Invoke();
-            // }
-            // if (Mathf.Abs(_entranceTimer - 4.75f) < epsilon)
-            // {
-            //     StoneThrown?.Invoke();
-            // }
+
         }
 
         protected override void _Exit()
         {
             
         }
-        
-        //private void 
 
-        public event Action ActionStarted;
-        public event Action StoneThrown;
+        protected override float CooldownTime { get; set; } = 10f;
 
-        protected override float CooldownTime { get; set; } = 30f;
+        public override bool IsReady => _isCoolTimeEnded &&
+                                        _controller.IsTargetWithinAttackAngle &&
+                                        !_controller.IsTargetWithinDistance(_attackDistance);
     }
 }
