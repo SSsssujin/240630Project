@@ -10,7 +10,7 @@ namespace INeverFall.Player
         protected override void Start()
         {
             _maxHp = _hp = 100;
-            _attackPower = 100;
+            _attackPower = 1000;
         }
     }
 }

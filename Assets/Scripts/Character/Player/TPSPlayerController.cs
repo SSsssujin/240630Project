@@ -7,8 +7,7 @@ using UnityEngine.InputSystem;
 
 namespace INeverFall.Player
 {
-    [RequireComponent(typeof(CharacterController))]
-    public class FPSPlayerController : MonoBehaviour
+    public class TPSPlayerController : PlayerController
     {
         public float MoveSpeed = 5;
         public float MaxForwardSpeed = 5f;
@@ -23,6 +22,7 @@ namespace INeverFall.Player
         private bool _isGrounded;
         private bool _isJumpInput;
         private bool _isReadyToJump;
+        
         private bool _IsJumpable => _isJumpInput && _isGrounded;
 
         private float _forwardSpeed;

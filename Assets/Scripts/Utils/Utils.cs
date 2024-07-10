@@ -51,6 +51,8 @@ namespace INeverFall
                 BossAnimation.ArmSwingAttack => "atk_armSwing",
                 BossAnimation.Dash => "atk_dash",
                 BossAnimation.ThrowStone => "atk_throwStone",
+                BossAnimation.HitLeftShoulder => "hit_left_shoulder",
+                BossAnimation.HitRightShoulder => "hit_right_shoulder",
                 _ => throw new ArgumentOutOfRangeException(nameof(animation), animation, null)
             };
             return name;

@@ -18,7 +18,6 @@ public class SlashSkill : Skill
     public void Create(CharacterBase attacker, Transform parent, Vector3 direction)
     {
         _Initialize(attacker, 30, attacker.AttackPower);   
-
         
         transform.position = parent.position + new Vector3(0, -1f, 0);
         _attackDirection = direction;
