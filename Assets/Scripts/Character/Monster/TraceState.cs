@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace INeverFall.Monster
 {
-    public class TraceState : State
+    public class TraceState : IState
     {
         private readonly BossMonster _controller;
         
@@ -15,12 +15,12 @@ namespace INeverFall.Monster
             _controller = controller;
         }
 
-        public override void Enter()
+        public void Enter()
         {
             _controller.Animator.SetBool(AnimationID.IsMoving, true);
         }
 
-        public override void Update()
+        public void Update()
         {
             _UpdatePosition();
             
@@ -38,7 +38,7 @@ namespace INeverFall.Monster
             }
         }
 
-        public override void Exit()
+        public void Exit()
         {
             _controller.Animator.SetBool(AnimationID.IsMoving, false);
         }

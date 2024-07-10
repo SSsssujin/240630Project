@@ -12,7 +12,7 @@ namespace INeverFall.Monster
         {
             _animation = BossAnimation.Dash;
         }
- 
+
         protected override void _Enter()
         {
         }

@@ -3,7 +3,7 @@ using INeverFall.Player;
 
 namespace INeverFall.Monster
 {
-    public class IdleState : State
+    public class IdleState : IState
     {
         private readonly BossMonster _controller;
 
@@ -18,14 +18,14 @@ namespace INeverFall.Monster
             _controller = controller;
         }
         
-        public override void Enter()
+        public void Enter()
         {
             _stateMachine = _controller.StateMachine;
-            _randomTimer = UnityEngine.Random.Range(0.5f, 1.0f);
+            _randomTimer = Random.Range(0.5f, 1.0f);
         }
 
         // [보충] if문 없애고 깔끔하게 상태 전환 할 수 있는 방법 찾아보기
-        public override void Update()
+        public void Update()
         {
             _entranceTimer += Time.deltaTime;
 
@@ -50,12 +50,12 @@ namespace INeverFall.Monster
             _TransitState(_stateMachine.TraceState);
         }
 
-        private void _TransitState(State state)
+        private void _TransitState(IState state)
         {
             _stateMachine.TransitionTo(state);
         }
 
-        public override void Exit()
+        public void Exit()
         {
             _entranceTimer = 0;
         }

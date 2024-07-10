@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 namespace INeverFall.Player
 {
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerController : MonoBehaviour
+    public class FPSPlayerController : MonoBehaviour
     {
         public float MoveSpeed = 5;
         public float MaxForwardSpeed = 5f;

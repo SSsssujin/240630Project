@@ -6,12 +6,13 @@ using UnityEngine;
 
 namespace INeverFall.Monster
 {
-    public abstract class AttackState : State
+    public abstract class AttackState : IState
     {
         protected readonly BossMonster _controller;
 
+        private float _entranceTimer = 0;
+        
         protected bool _isCoolTimeEnded = true;
-        protected float _entranceTimer = 0;
         protected BossAnimation _animation;
 
         // CoolTime
@@ -23,14 +24,14 @@ namespace INeverFall.Monster
             _controller = controller;
         }
 
-        public sealed override void Enter()
+        public void Enter()
         {
             _Enter();
             _StartCoolTimeCoroutine();
             _controller.Animator.PlayAttackAnimation(_animation);
         }
 
-        public sealed override void Update()
+        public void Update()
         {
             _entranceTimer += Time.deltaTime;
 
@@ -43,7 +44,7 @@ namespace INeverFall.Monster
             _Update();
         }
 
-        public sealed override void Exit()
+        public void Exit()
         {
             _entranceTimer = 0;
             _Exit();

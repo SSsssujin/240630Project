@@ -13,6 +13,8 @@ namespace INeverFall.Monster
         public readonly FrontAttackState FrontAttackState;
         public readonly DashAttackState DashAttackState;
         public readonly ThrowStoneAttackState ThrowStoneAttackState;
+        public readonly GroggyState GroggyState;
+        public readonly DeadState DeadState;
         
         private BossMonster _controller;
         
@@ -25,6 +27,8 @@ namespace INeverFall.Monster
             FrontAttackState = new FrontAttackState(controller);
             DashAttackState = new DashAttackState(controller);
             ThrowStoneAttackState = new ThrowStoneAttackState(controller);
+            GroggyState = new GroggyState(controller);
+            DeadState = new DeadState(controller);
         }
     }
 }

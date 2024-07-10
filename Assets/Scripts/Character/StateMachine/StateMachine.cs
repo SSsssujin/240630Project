@@ -7,9 +7,9 @@ namespace INeverFall
 {
     public abstract class StateMachine
     {
-        public State CurrentState { get; private set; }
+        public IState CurrentState { get; private set; }
 
-        public void Initialize(State state)
+        public void Initialize(IState state)
         {
             CurrentState = state;
             state.Enter();
@@ -17,9 +17,9 @@ namespace INeverFall
             StateChanged?.Invoke(state);
         }
         
-        public void TransitionTo(State nextState)
+        public void TransitionTo(IState nextState)
         {
-            Debug.LogError("Next state : " + nextState);
+            // Debug.LogError("Next state : " + nextState);
         
             CurrentState.Exit();
             CurrentState = nextState;
@@ -37,6 +37,6 @@ namespace INeverFall
             }
         }
         
-        public event Action<State> StateChanged;
+        public event Action<IState> StateChanged;
     }
 }

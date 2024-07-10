@@ -44,13 +44,28 @@ namespace INeverFall.Monster
         private BossStateMachine _stateMachine;
         private BossStone _stone;
 
-        public event System.Action<float> HealthChanged;
+        private int _damageCount;
+        private const int _groggyEntranceDamageCount = 5;
 
         protected override void _OnDamage()
         {
             // Notify to presenter
             var currentHpRate = (float)_hp / _maxHp;
             HealthChanged?.Invoke(currentHpRate);
+
+            _damageCount++;
+            // [보충] Groggy 진입 조건 다시 생각해보기
+            // n초 동안 m번 이상 공격 당했을때?
+            if (_damageCount == _groggyEntranceDamageCount)
+            {
+                _stateMachine.TransitionTo(_stateMachine.GroggyState);
+                _damageCount = 0;
+            }
+        }
+
+        protected override void _OnDead()
+        {
+            _stateMachine.TransitionTo(_stateMachine.DeadState);
         }
 
         private void _AddAnimationEvents()
@@ -163,11 +178,14 @@ namespace INeverFall.Monster
         {
             GroundAttackHandPosition = null;
         }
+        
+        public event System.Action<float> HealthChanged;
 
-        public bool IsTargetWithinAttackRange => _IsTargetWithinDistance(AttackDistance) && _IsTargetWithinAttackAngle();
         public float AttackDistance { get; private set; } = 10;        
         public float MaxAttackAngle { get; private set; } = 45.0f;
         public Vector3? GroundAttackHandPosition { private get; set; }
+        
+        public bool IsTargetWithinAttackRange => _IsTargetWithinDistance(AttackDistance) && _IsTargetWithinAttackAngle();
         public PlayerCharacter Target => _player;
         public Animator Animator => _animator;
         public NavMeshAgent NavMeshAgent => _navMeshAgent;
