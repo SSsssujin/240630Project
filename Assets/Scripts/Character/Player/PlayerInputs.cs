@@ -25,6 +25,11 @@ namespace INeverFall
             _look = value.Get<Vector2>();
         }
 
+        public void OnZoom(InputValue value)
+        {
+            _zoom = value.Get<Vector2>();
+        }
+
         public void OnJump(InputValue value)
         {
             _jump = value.isPressed;
@@ -33,11 +38,6 @@ namespace INeverFall
         public void OnSprint(InputValue value)
         {
             _sprint = value.isPressed;
-        }
-
-        public void OnZoom(InputValue value)
-        {
-            _zoom = value.Get<Vector2>();
         }
 
         public void OnCameraLock(InputValue value)
