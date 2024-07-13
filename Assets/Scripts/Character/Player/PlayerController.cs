@@ -9,10 +9,34 @@ namespace INeverFall.Player
     public class PlayerController : MonoBehaviour
     {
         private const float _threshold = 0.01f;
+        private const float _terminalVelocity = 53.0f;
 
+        [Header("Move")]
         public float MoveSpeed;
         public float SprintSpeed;
+        public float SpeedChangeRate = 10.0f;
+        public float RotationSmoothTime = 0.12f;
         
+        [Space(10)]
+
+        [Header("Jump")]
+        public bool Grounded = true;
+        public float JumpTimeout = 0.50f;
+        public float FallTimeout = 0.15f;
+        public float GroundedOffset = -0.14f;
+        public float GroundedRadius = 0.28f;
+        public float JumpHeight = 1.2f;
+        public float Gravity = -15.0f;
+        public LayerMask GroundLayers;
+
+        private float _speed;
+        private float _targetRotation;
+        private float _rotationVelocity;
+        private float _verticalVelocity;
+        
+        private float _jumpTimeoutDelta;
+        private float _fallTimeoutDelta;
+
         // Cinemachine
         private float _cinemachineTargetYaw;
         private float _cinemachineTargetPitch;
@@ -38,45 +62,93 @@ namespace INeverFall.Player
             
             _fpsMovement = new();
             _tpsMovement = new();
+            
+            _jumpTimeoutDelta = JumpTimeout;
+            _fallTimeoutDelta = FallTimeout;
         }
 
         private void Update()
         {
-            _CalculateMovement();
-            _SetPlayerRotation();
+            _Jump();
+            _CheckGround();
             _MovePlayer();
         }
 
-        private void LateUpdate()
+        private void _Jump()
         {
-            //_RotateCamera();
-        }
+            if (Grounded)
+            {
+                _fallTimeoutDelta = FallTimeout;
 
-        private static float _ClampAngle(float lfAngle, float lfMin, float lfMax)
-        {
-            if (lfAngle < -360f) lfAngle += 360f;
-            if (lfAngle > 360f) lfAngle -= 360f;
-            return Mathf.Clamp(lfAngle, lfMin, lfMax);
-        }
+                if (_verticalVelocity < 0.0f)
+                {
+                    _verticalVelocity = -2f;
+                }
 
-        private void _SetPlayerRotation()
-        {
+                // Jump
+                if (_keyInput.Jump && _jumpTimeoutDelta <= 0.0f)
+                {
+                    Debug.Log("Jump");
+                    
+                    _animator.SetTrigger("Jump");
+                    
+                    // the square root of H * -2 * G = how much velocity needed to reach desired height
+                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+
+                    // update animator if using character
+                    // if (_hasAnimator)
+                    // {
+                    //     _animator.SetBool(_animIDJump, true);
+                    // }
+                }
+                
+                // jump timeout
+                if (_jumpTimeoutDelta >= 0.0f)
+                {
+                    _jumpTimeoutDelta -= Time.deltaTime;
+                }
+            }
+            else
+            {
+                // reset the jump timeout timer
+                _jumpTimeoutDelta = JumpTimeout;
+
+                // fall timeout
+                if (_fallTimeoutDelta >= 0.0f)
+                {
+                    _fallTimeoutDelta -= Time.deltaTime;
+                }
+                else
+                {
+                    // update animator if using character
+                    // if (_hasAnimator)
+                    // {
+                    //     _animator.SetBool(_animIDFreeFall, true);
+                    // }
+                }
+
+                // if we are not grounded, do not jump
+                //_keyInput.Jump = false;
+            }
             
+            // apply gravity over time
+            // if under terminal (multiply by delta time twice to linearly speed up over time)
+            if (_verticalVelocity < _terminalVelocity)
+            {
+                _verticalVelocity += Gravity * Time.deltaTime;
+            }
         }
-
-        private void _CalculateMovement()
-        {
-            
-        }
-
-        private float _speed;
-        private float _targetRotation = 0.0f;
-        private float _rotationVelocity;
-        private float _verticalVelocity;
         
-        public float SpeedChangeRate = 10.0f;
-        public float RotationSmoothTime = 0.12f;
-
+        private void _CheckGround()
+        {
+            // set sphere position, with offset
+            Vector3 spherePosition = new Vector3(transform.position.x, transform.position.y - GroundedOffset,
+                transform.position.z);
+            Grounded = Physics.CheckSphere(spherePosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
+            
+            _animator.SetBool("IsGrounded", Grounded);
+        }
+        
         private void _MovePlayer()
         {
             if (_keyInput.CameraLocked)
@@ -88,8 +160,6 @@ namespace INeverFall.Player
                 
                 if (_keyInput.Move == Vector2.zero) targetSpeed = 0.0f;
 
-                //_animator.speed = _keyInput.Sprint ? 1.5f : 1;
-                
                 float currentHorizontalSpeed = new Vector3(_characterController.velocity.x, 0.0f, _characterController.velocity.z).magnitude;
                 float speedOffset = 0.1f;
                 float inputMagnitude = _keyInput.Move.magnitude;
@@ -125,12 +195,6 @@ namespace INeverFall.Player
                 {
                     // Adjust the input direction based on the character's rotation
                     var direction = transform.InverseTransformDirection(targetDirection);
-                    
-                    // float scaledVelocityX = direction.x * (targetSpeed / SprintSpeed);
-                    // float scaledVelocityZ = direction.z * (targetSpeed / SprintSpeed);
-                    //
-                    // _animator.SetFloat(AnimationID.VelocityX, scaledVelocityX);
-                    // _animator.SetFloat(AnimationID.VelocityZ, scaledVelocityZ);
 
                     _animator.SetFloat(AnimationID.VelocityX, direction.x * _speed);
                     _animator.SetFloat(AnimationID.VelocityZ, direction.z * _speed);
@@ -142,7 +206,8 @@ namespace INeverFall.Player
                 }
 
                 // move the player
-                _characterController.Move(targetDirection * (_speed * Time.deltaTime));
+                _characterController.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
+                                 new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
             }
         }
     }
