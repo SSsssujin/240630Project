@@ -64,10 +64,9 @@ namespace INeverFall
 
             foreach (var clip in ac.animationClips)
             {
-                Debug.Log(clip.name);
-                
                 if (String.Equals(clip.name, clipName))
                 {
+                    Debug.Log($"I got [{clipName}] !!");
                     return clip;
                 }
             }

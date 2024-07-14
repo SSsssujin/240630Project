@@ -6,8 +6,8 @@ namespace INeverFall
 {
     public abstract class Weapon : MonoBehaviour
     {
-        protected WeaponType _weaponType;
         protected float _attackTiming;
+        protected WeaponType _weaponType;
 
         protected virtual void Start()
         {

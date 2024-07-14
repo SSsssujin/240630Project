@@ -162,7 +162,7 @@
                     "name": "",
                     "id": "65dfe147-657e-42a8-a4ab-ecf3dcdff177",
                     "path": "<Mouse>/leftButton",
-                    "interactions": "",
+                    "interactions": "Press(behavior=2)",
                     "processors": "",
                     "groups": "PC",
                     "action": "Attack",

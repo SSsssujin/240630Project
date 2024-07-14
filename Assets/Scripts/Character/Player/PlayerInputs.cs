@@ -13,6 +13,7 @@ namespace INeverFall
         
         [SerializeField] private bool _jump;
         [SerializeField] private bool _sprint;
+        [SerializeField] private bool _attack;
         [SerializeField] private bool _cameraLocked;
         
         public void OnMove(InputValue value)
@@ -40,6 +41,11 @@ namespace INeverFall
             _sprint = value.isPressed;
         }
 
+        public void OnAttack(InputValue value)
+        {
+            _attack = value.isPressed;
+        }
+        
         public void OnCameraLock(InputValue value)
         {
             _cameraLocked = value.isPressed;
@@ -51,6 +57,7 @@ namespace INeverFall
         
         public bool Jump => _jump;
         public bool Sprint => _sprint;
+        public bool Attack => _attack;
         public bool CameraLocked => _cameraLocked;
     }
 }

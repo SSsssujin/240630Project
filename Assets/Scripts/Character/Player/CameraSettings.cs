@@ -40,5 +40,7 @@ namespace INeverFall
             _firstCamera ??= transform.Find("FPS").GetComponentInChildren<CinemachineCamera>();
             _thirdCamera ??= transform.Find("TPS").GetComponentInChildren<CinemachineCamera>();
         }
+
+        public Transform CurrentCamera => transform.GetChild((int)_type);
     }
 }
