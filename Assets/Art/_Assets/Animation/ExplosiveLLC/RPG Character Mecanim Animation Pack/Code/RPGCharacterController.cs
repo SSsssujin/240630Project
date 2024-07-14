@@ -929,14 +929,12 @@ namespace RPGCharacterAnims
 	        if (side == Side.Left && leftWeapon || twoHandedWeapon)
 	        {
 		        animator.SetActionTrigger(AnimatorTrigger.AttackTrigger, 1);
-		        Debug.Log("HHH");
 	        }
 			else if (side == Side.Right && rightWeapon)
 			{ animator.SetActionTrigger(AnimatorTrigger.AttackTrigger, 4); }
 			else if (side == Side.Dual && dualWeapon)
 			{
 				animator.SetActionTrigger(AnimatorTrigger.AttackDualTrigger, 1);
-				Debug.Log("RA");
 			}
 			else if (hasNoWeapon) {
 				animator.SetSide(side);
