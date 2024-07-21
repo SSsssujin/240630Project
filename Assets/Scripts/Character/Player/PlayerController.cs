@@ -1,8 +1,12 @@
 using System;
+using System.Collections;
+using DG.Tweening;
+using INeverFall.Manager;
 using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using Extensions = INeverFall.Extensions;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -12,11 +16,11 @@ namespace INeverFall.Player
     [RequireComponent(typeof(PlayerInput), typeof(PlayerInputs))]
     public class PlayerController : MonoBehaviour
     {
+        enum AttackState { None, First, Second, Last }
+
         private const float _threshold = 0.01f;
         private const float _terminalVelocity = 53.0f;
-
-        private float _attackDuration = 0.8f;
-
+        private const int _attackAnimationSpeed = 2;
 
         [Header("Move")]
         public float MoveSpeed;
@@ -35,7 +39,12 @@ namespace INeverFall.Player
         public float Gravity = -15.0f;
         public LayerMask GroundLayers;
 
+        [Space(10)]
+        [Header("Attack")]
+        public float _lastAttackTimeBet = 0.5f;
+
         // Move
+        private bool _isMoving;
         private float _speed;
         private float _targetRotation;
         private float _rotationVelocity;
@@ -49,6 +58,10 @@ namespace INeverFall.Player
         // Attack
         private bool _isAttacking;
         private float _attackTime;
+        private float _animationSkipRate = 0.8f;
+        private float _lastAttackTime;
+        private float _attackDuration = 0.8f;
+        private AttackState _attackState;
 
         // Cinemachine
         private float _cinemachineTargetYaw;
@@ -73,9 +86,12 @@ namespace INeverFall.Player
             _weapon = GetComponentInChildren<Weapon>();
             _playerCharacter = GetComponent<CharacterBase>() as PlayerCharacter;
             
+            // Initialize
             _cinemachineTargetYaw = transform.rotation.eulerAngles.y;
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
+
+            _AddAnimationEvents();
         }
 
         private void Update()
@@ -141,11 +157,9 @@ namespace INeverFall.Player
             _animator.SetBool(AnimationID.IsGrounded, _isGrounded);
         }
 
-        private bool _isMoving;
-        
         private void _MovePlayer()
         {
-            if (_isMoveBlocked) return;
+            if (_isAttacking) return;
             
             if (_keyInput.CameraLocked)
             {
@@ -214,46 +228,113 @@ namespace INeverFall.Player
             }
         }
 
-        private bool _isMoveBlocked;
-
         private void _Attack()
         {
             // Do Attack
             if (_keyInput.Attack && !_isAttacking)
             {
                 _isAttacking = true;
-                _animator.SetTrigger(AnimationID.Attack);
-                _weapon.DoAttack(_playerCharacter, transform.forward);
+
+                // Reset attack state
+                if (Time.time >= _lastAttackTime + _lastAttackTimeBet)
+                {
+                    _attackState = AttackState.None;
+                }
+
+                _attackState = _attackState switch
+                {
+                    AttackState.None => AttackState.First,
+                    AttackState.First => AttackState.Second,
+                    AttackState.Second => AttackState.Last,
+                    AttackState.Last => AttackState.First,
+                    _ => AttackState.None
+                };
                 
-                if (!_isMoving)
-                {
-                    // Select random attack animation
-                    int randomId = Random.Range(2, 9); 
-                    _animator.SetInteger(AnimationID.AttackID, randomId);
-                    AnimationClip clip = Utils.GetAnimationClipByName(_animator, "2Hand-Sword-Attack" + randomId);
-                    _attackDuration = clip.length;
-                    
-                }
-                else
-                {
-                    _attackDuration = 0.8f;
-                }
+                // Play last attack animation fully, else 80 %
+                _animationSkipRate = _attackState == AttackState.Last ? 1.1f : 0.8f;
+                
+                // Animation
+                _animator.SetTrigger(AnimationID.Attack);
+                _animator.SetInteger(AnimationID.AttackID, (int)_attackState);
+                
+                var currentClip = _animator.GetAnimationClipByName("Attack" + (int)_attackState);
+                if (currentClip == null) Debug.Log(_attackState);
+                _attackDuration = (currentClip.length / _attackAnimationSpeed) * _animationSkipRate;
+                
+                _DoAttack(_attackState);
+                _lastAttackTime = Time.time + _attackDuration;
             }
 
             // Attack timer
             if (_isAttacking)
             {
                 _attackTime += Time.deltaTime;
-                _isMoveBlocked = true;
                 
                 if (_attackTime >= _attackDuration)
                 {
-                    _isAttacking = false;
                     _attackTime = 0;
-                    _animator.ResetTrigger(AnimationID.Attack);
-                    _isMoveBlocked = false;
+                    _isAttacking = false;
+                    _animator.SetInteger(AnimationID.AttackID, 0);
                 }
             }
         }
+
+        private void _DoAttack(AttackState state)
+        {
+            switch (state)
+            {
+                case AttackState.None:
+                    break;
+                case AttackState.First:
+                    if (_isMoving)
+                    {
+                        transform.DOMove(transform.position + transform.forward * 3.5f, 0.25f)
+                            .SetEase(Ease.OutQuad);
+                    }
+                    break;
+                case AttackState.Second:
+                    break;
+                case AttackState.Last:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
+            }
+        }
+
+        private void _AddAnimationEvents()
+        {
+            // Attack Effect
+            // 1 Left
+            // 2 Left Right
+            // 3 Left Crash
+
+            int left = 1;
+            int right = 2;
+            int crack = 3;
+            
+            var firstAttackAnimationClip = _animator.GetAnimationClipByName("Attack1");
+            firstAttackAnimationClip.AddAnimationEvent(nameof(_InstantiateEffect), 0.7f, left);
+            
+            var secondAttackAnimationClip = _animator.GetAnimationClipByName("Attack2");
+            secondAttackAnimationClip.AddAnimationEvent(nameof(_InstantiateEffect), 1f, left);
+            secondAttackAnimationClip.AddAnimationEvent(nameof(_InstantiateEffect), 2f, right);
+
+            var lastAttackAnimationClip = _animator.GetAnimationClipByName("Attack3");
+            lastAttackAnimationClip.AddAnimationEvent(nameof(_InstantiateEffect), 1f, left);
+            lastAttackAnimationClip.AddAnimationEvent(nameof(_InstantiateEffect), 2.6f, crack);
+        }
+
+        public Vector3 EffectRotation = new (-19.14f, -0.401f, 28);
+        
+        private void _InstantiateEffect(int skillId)
+        {
+            var position = transform.position + new Vector3(0, -GroundedOffset, 0);
+            
+            GameObject fx = ResourceManager.Instance.Instantiate("Skill" + skillId);
+            fx.transform.position = transform.forward * 2.5f;
+            fx.transform.rotation = Quaternion.Euler(EffectRotation);
+
+            Debug.Log(fx.transform.position);
+        }   
     }
 }

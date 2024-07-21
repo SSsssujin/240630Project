@@ -57,21 +57,7 @@ namespace INeverFall
             };
             return name;
         }
-        
-        public static AnimationClip GetAnimationClipByName(Animator animator, string clipName)
-        {
-            RuntimeAnimatorController ac = animator.runtimeAnimatorController;
 
-            foreach (var clip in ac.animationClips)
-            {
-                if (String.Equals(clip.name, clipName))
-                {
-                    Debug.Log($"I got [{clipName}] !!");
-                    return clip;
-                }
-            }
-            return null;
-        }
         
         public static AnimationClip GetAnimationClipByType(Animator animator, BossAnimation animation)
         {

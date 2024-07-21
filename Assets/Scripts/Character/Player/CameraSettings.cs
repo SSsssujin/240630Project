@@ -8,25 +8,14 @@ namespace INeverFall
 {
     public class CameraSettings : MonoBehaviour
     {
-        enum CameraType
-        {
-            FPS,
-            TPS
-        }
-        
         [SerializeField] 
         private Transform _target;
 
-        [SerializeField] 
-        private CameraType _type;
-
-        private CinemachineCamera _firstCamera;
         private CinemachineCamera _thirdCamera;
 
         private void OnValidate()
         {
             _Cache();
-            _firstCamera.Target.TrackingTarget = _target;
             _thirdCamera.Target.TrackingTarget = _target;
         }
 
@@ -37,10 +26,7 @@ namespace INeverFall
 
         private void _Cache()
         {
-            _firstCamera ??= transform.Find("FPS").GetComponentInChildren<CinemachineCamera>();
-            _thirdCamera ??= transform.Find("TPS").GetComponentInChildren<CinemachineCamera>();
+            _thirdCamera ??= transform.GetComponentInChildren<CinemachineCamera>();
         }
-
-        public Transform CurrentCamera => transform.GetChild((int)_type);
     }
 }

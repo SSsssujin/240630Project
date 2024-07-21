@@ -47,7 +47,8 @@ public class AnimationEventEffects : MonoBehaviour {
         }
 
         var instance = Instantiate(Effects[EffectNumber].Effect, Effects[EffectNumber].StartPositionRotation.position, Effects[EffectNumber].StartPositionRotation.rotation);
-
+Debug.Log("Instantiate : " + Effects[EffectNumber].Effect.name);
+        
         if (Effects[EffectNumber].UseLocalPosition)
         {
             instance.transform.parent = Effects[EffectNumber].StartPositionRotation.transform;
