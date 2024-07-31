@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -38,7 +39,14 @@ public class AnimationEventEffects : MonoBehaviour {
     //   }
     void Start() {
     }
-            
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+        }
+    }
+
     void InstantiateEffect(int EffectNumber)
     {
         if(Effects == null || Effects.Length <= EffectNumber)
