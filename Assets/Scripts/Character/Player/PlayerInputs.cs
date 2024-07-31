@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,6 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace INeverFall
 {
+    [RequireComponent(typeof(PlayerInput))]
     public class PlayerInputs : MonoBehaviour
     {
         [SerializeField] private Vector2 _move;
@@ -18,6 +20,8 @@ namespace INeverFall
         
         public void OnMove(InputValue value)
         {
+            //_move = value.Get<Vector2>();
+            //Moved?.Invoke(_move);
             _move = value.Get<Vector2>();
         }
 
@@ -33,7 +37,7 @@ namespace INeverFall
 
         public void OnJump(InputValue value)
         {
-            _jump = value.isPressed;
+            //_jump = value.isPressed;
         }
 
         public void OnSprint(InputValue value)
@@ -50,6 +54,8 @@ namespace INeverFall
         {
             _cameraLocked = value.isPressed;
         }
+
+        public event Action<Vector2> Moved;
         
         public Vector2 Move => _move;
         public Vector2 Look => _look;

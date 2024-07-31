@@ -8,16 +8,15 @@ public class SlashSkill : Skill
     private bool _isActivate;
     private Vector3 _attackDirection;
     
-    protected override void _Initialize(CharacterBase attacker, float speed, int attackPower)
+    public override void Initialize(CharacterBase attacker, int attackPower)
     {
         _attacker = attacker;
-        _speed = speed;
         _attackPower = attackPower;
     }
     
     public void Create(CharacterBase attacker, Transform parent, Vector3 direction)
     {
-        _Initialize(attacker, 30, attacker.AttackPower);   
+        Initialize(attacker, attacker.AttackPower);   
         
         transform.position = parent.position + new Vector3(0, -1f, 0);
         _attackDirection = direction;
@@ -26,10 +25,10 @@ public class SlashSkill : Skill
 
     private void Update()
     {
-        if (_isActivate)
-        {
-            transform.position += _attackDirection * _speed * Time.deltaTime;
-        }
+        // if (_isActivate)
+        // {
+        //     transform.position += _attackDirection * _speed * Time.deltaTime;
+        // }
     }
 
 

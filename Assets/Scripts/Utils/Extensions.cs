@@ -37,7 +37,7 @@ namespace INeverFall
             return null;
         }
 
-        public static bool IsSpecificAnimationPlaying(this Animator animator, Monster.BossAnimation animationType, int layerIndex = 0)
+        public static bool IsSpecificAnimationPlaying(this Animator animator, BossAnimation animationType, int layerIndex = 0)
         {
             string animationName = Utils.GetBossAttackAnimationName(animationType);
             AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
@@ -65,7 +65,7 @@ namespace INeverFall
             return stateInfo.length;
         }
 
-        public static void PlayAttackAnimation(this Animator animator, Monster.BossAnimation animation)
+        public static void PlayAttackAnimation(this Animator animator, BossAnimation animation)
         {
             animator.SetTrigger(Monster.AnimationID.AttackTrigger);
             animator.SetInteger(Monster.AnimationID.Attack, (int)animation);

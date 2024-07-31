@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using INeverFall.Manager;
 using INeverFall.Player;
 using UnityEngine;
@@ -27,6 +29,10 @@ namespace INeverFall.Monster
         3. Dash 중간에 애니메이션 안 끊김
      */
     
+    
+    // Boss Skill Effect Controller
+    // 
+    
     [RequireComponent(typeof(CharacterController))]
     public partial class BossMonster : Monster
     {
@@ -43,9 +49,10 @@ namespace INeverFall.Monster
         private PlayerCharacter _player;
         private BossStateMachine _stateMachine;
         private BossStone _stone;
+        private BossBodyEffect[] _bodyEffects;
 
         private int _damageCount;
-        private const int _groggyEntranceDamageCount = 5;
+        private const int _groggyEntryDamageCount = 5;
 
         protected override void _OnDamage()
         {
@@ -53,14 +60,27 @@ namespace INeverFall.Monster
             var currentHpRate = (float)_hp / _maxHp;
             HealthChanged?.Invoke(currentHpRate);
 
-            _damageCount++;
-            // [보충] Groggy 진입 조건 다시 생각해보기
-            // n초 동안 m번 이상 공격 당했을때?
-            if (_damageCount == _groggyEntranceDamageCount)
-            {
-                _stateMachine.TransitionTo(_stateMachine.GroggyState);
-                _damageCount = 0;
-            }
+            // if (_stateMachine.CurrentState != _stateMachine.GroggyState)
+            // {
+            //     _damageCount++;
+            //     // [보충] Groggy 진입 조건 다시 생각해보기
+            //     // n초 동안 m번 이상 공격 당했을때?
+            //     if (_damageCount == _groggyEntryDamageCount)
+            //     {
+            //         _stateMachine.TransitionTo(_stateMachine.GroggyState);
+            //         _damageCount = 0;
+            //     }
+            // }
+
+            StartCoroutine(nameof(_cDamageColor));
+        }
+        
+        private IEnumerator _cDamageColor()
+        {
+            var mat = GetComponentInChildren<SkinnedMeshRenderer>().material;
+            mat.color = Color.gray;
+            yield return new WaitForSeconds(0.1f);
+            mat.color = Color.white;
         }
 
         protected override void _OnDead()
@@ -147,38 +167,27 @@ namespace INeverFall.Monster
             return inAngle;
         }
 
-        public bool IsTargetWithinDistance(float a) => _IsTargetWithinDistance(a);
-        public bool IsTargetWithinAttackAngle => _IsTargetWithinAttackAngle();
-
-        // [보충]
-        // Penetrating the ground collider 하는 것을 방지하기 위함
-        private void _AdjustAttackingHandPosition()
+        public void ActivateEffect(BossAnimation effectType)
         {
-            // When attack ground
-            if (_animator.IsSpecificAnimationPlaying(BossAnimation.GroundAttack))
+            var desiredEffects = Array.FindAll(_bodyEffects, x => x.EffectType == effectType);
+            foreach (var effect in desiredEffects)
             {
-                Vector3 currentHandPosition = _animator.GetIKPosition(AvatarIKGoal.RightHand);
-                float groundPositionY = currentHandPosition.y;
-                float rayDistance = 5f;
-
-                if (GroundAttackHandPosition != null)
-                {
-                    groundPositionY = GroundAttackHandPosition.Value.y;
-                }
-                
-                // Adjust the hand position based on the ground height
-                _animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
-                Vector3 targetPosition = _animator.GetIKPosition(AvatarIKGoal.RightHand);
-                targetPosition.y = Mathf.Max(targetPosition.y, groundPositionY);
-                _animator.SetIKPosition(AvatarIKGoal.RightHand, targetPosition);
+                effect.ActivateEffect();
+            }
+        }
+        
+        public void DeactivateEffect(BossAnimation effectType)
+        {
+            var desiredEffects = Array.FindAll(_bodyEffects, x => x.EffectType == effectType);
+            foreach (var effect in desiredEffects)
+            {
+                effect.DeactivateEffect();
             }
         }
 
-        private void _ResetSaveHandPosition()
-        {
-            GroundAttackHandPosition = null;
-        }
-        
+        public bool IsTargetWithinDistance(float a) => _IsTargetWithinDistance(a);
+        public bool IsTargetWithinAttackAngle => _IsTargetWithinAttackAngle();
+
         public event System.Action<float> HealthChanged;
 
         public float AttackDistance { get; private set; } = 10;        
@@ -191,14 +200,6 @@ namespace INeverFall.Monster
         public NavMeshAgent NavMeshAgent => _navMeshAgent;
         public BossStateMachine StateMachine => _stateMachine;
     }
-    
-    /*
-     * 문제점.
-     * NevMesh로 보스 로테이션을 업데이트 하는데,
-     * 현재 TraceState에서만 NevMesh가 업데이트 됨.
-     * 꾸준히 보스의 방향을 플레이어 쪽으로 돌려야 함.
-     * => Dash 쿨타임 줄이고 AnimationEvent 추가해서 휙 돌때 로테이션 돌려버리자
-     */
 
     // Event functions
     public partial class BossMonster
@@ -212,10 +213,11 @@ namespace INeverFall.Monster
             _navMeshAgent = GetComponent<NavMeshAgent>();
             _animator = GetComponent<Animator>();
             _player = FindFirstObjectByType<PlayerCharacter>();
+            _bodyEffects = GetComponentsInChildren<BossBodyEffect>(true);
             
             // State machine
-            _stateMachine = new BossStateMachine(this);
-            _stateMachine.Initialize(_stateMachine.IdleState);
+            //_stateMachine = new BossStateMachine(this);
+            //_stateMachine.Initialize(_stateMachine.IdleState);
             
             // Locomotion setting
             _animator.applyRootMotion = true;
@@ -227,6 +229,7 @@ namespace INeverFall.Monster
             
             // Initialize variables
             _maxHp = _hp = 10000;
+            _attackPower = 5;
         }
 
         private void Update()
@@ -241,12 +244,6 @@ namespace INeverFall.Monster
             rootPosition.y = _navMeshAgent.nextPosition.y;
             transform.position = rootPosition;
             _navMeshAgent.nextPosition = rootPosition;
-
-            // [보충]
-            // 1. 공격 모션 할 때, 보스 방향 플레이어 쪽으로 돌리기
-            // 2. 도는 중에도 애니메이션 재생하기
-            // _navMeshAgent.updateRotation = false일때,
-            //transform.rotation = _animator.rootRotation;
         }
         
         private void OnAnimatorIK(int layerIndex)
@@ -254,28 +251,6 @@ namespace INeverFall.Monster
             if (!_animator) return;
 
             //_AdjustAttackingHandPosition();
-        }
-        
-        private void OnDrawGizmos()
-        {
-            if (Target == null)
-                return;
-            
-            Vector3 bossPosition = transform.position;
-            Vector3 forward = transform.forward;
-
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(bossPosition, AttackDistance);
-
-            Vector3 rightLimit = Quaternion.Euler(0, MaxAttackAngle, 0) * forward * AttackDistance;
-            Vector3 leftLimit = Quaternion.Euler(0, -MaxAttackAngle, 0) * forward * AttackDistance;
-
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(bossPosition, bossPosition + rightLimit);
-            Gizmos.DrawLine(bossPosition, bossPosition + leftLimit);
-
-            Gizmos.color = Color.green;
-            Gizmos.DrawLine(bossPosition, Target.transform.position);
         }
     }
 }

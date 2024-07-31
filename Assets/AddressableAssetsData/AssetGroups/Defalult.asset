@@ -16,22 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 9b251ee0682e3204ab5792ea01a5e127
-  m_SerializeEntries:
-  - m_GUID: 34056badaa2e53e4880060b8555cf982
-    m_Address: Skill
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5931320ec189983429aff776b19cb40d
-    m_Address: TestSlash
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a05972d947173734f9ef9f2098ca1efc
-    m_Address: Rock
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: c7c2f8b2dae369b4ca4b60c9ce354fd2, type: 2}
   m_SchemaSet:

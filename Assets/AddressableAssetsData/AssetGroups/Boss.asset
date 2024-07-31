@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Boss
+  m_EditorClassIdentifier: 
+  m_GroupName: Boss
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 1860db2e1425a1a46b904a9cd95dd136
+  m_SerializeEntries:
+  - m_GUID: a05972d947173734f9ef9f2098ca1efc
+    m_Address: Rock
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d9929c428cb22744aaf93a70bc1b8dea
+    m_Address: Dash
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f99746c2f580ef74cbcee27760525a9a
+    m_Address: GroundAttack
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 58bc336d9b5d847419b855db4aaa4432
+    m_Address: ArmSwingAttack
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: c7c2f8b2dae369b4ca4b60c9ce354fd2, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 2bd61b5413b699a43905db2df71433da, type: 2}
+    - {fileID: 11400000, guid: 033670d92ef59ed4a911b5642f172e42, type: 2}

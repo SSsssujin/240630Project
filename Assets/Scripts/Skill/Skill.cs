@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using INeverFall.Manager;
 using UnityEngine;
 
 namespace INeverFall
@@ -8,15 +9,28 @@ namespace INeverFall
     [RequireComponent(typeof(Collider))]
     public abstract class Skill : MonoBehaviour
     {
-        protected float _speed;
         protected int _attackPower;
-        
+        protected bool _isChecking { get; private set; } = true;
+
+        protected Collider _collider;
         protected CharacterBase _attacker;
 
-        protected abstract void _Initialize(CharacterBase attacker, float speed, int attackPower);
+        private void Awake()
+        {
+            _collider = GetComponent<Collider>();
+        }
+
+        protected virtual void Update()
+        {
+            
+        }
+
+        public abstract void Initialize(CharacterBase attacker, int attackPower);
 
         protected void OnTriggerEnter(Collider other)
         {
+            if (!_isChecking) return;
+            
             if (other.TryGetComponent<IDamageable>(out var character))
             {
                 if (_attacker == (CharacterBase)character)
@@ -25,7 +39,29 @@ namespace INeverFall
                 }
                 
                 character.OnDamage(_attacker, _attackPower);
+                _isChecking = false;
             }
+        }
+
+        protected void _StartDestroy(float lifeTime)
+        {
+            StartCoroutine(_cStartDestroy(lifeTime));
+        }
+        
+        private IEnumerator _cStartDestroy(float lifeTime)
+        {
+            yield return new WaitForSeconds(lifeTime);
+            ResourceManager.Instance.Destroy(gameObject);
+        }
+
+        protected void _ActivateCollider()
+        {
+            _collider.enabled = true;
+        }
+        
+        protected void _DeactivateCollider()
+        {
+            _collider.enabled = false;
         }
     }
 }

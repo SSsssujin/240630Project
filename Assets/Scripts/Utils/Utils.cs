@@ -8,7 +8,6 @@ namespace INeverFall
 {
     public static class Utils
     {
-
         public static float AttackDuration(WeaponType weapon)
 		{
 			float duration = 1f;
@@ -43,11 +42,11 @@ namespace INeverFall
             return attackTime;
         }
 
-        public static string GetBossAttackAnimationName(Monster.BossAnimation animation)
+        public static string GetBossAttackAnimationName(BossAnimation animation)
         {
             string name = animation switch
             {
-                BossAnimation.GroundAttack => "atk_ground02",
+                BossAnimation.GroundAttack => "atk_ground",
                 BossAnimation.ArmSwingAttack => "atk_armSwing",
                 BossAnimation.Dash => "atk_dash",
                 BossAnimation.ThrowStone => "atk_throwStone",
