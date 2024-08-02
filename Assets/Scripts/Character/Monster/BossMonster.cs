@@ -216,8 +216,8 @@ namespace INeverFall.Monster
             _bodyEffects = GetComponentsInChildren<BossBodyEffect>(true);
             
             // State machine
-            //_stateMachine = new BossStateMachine(this);
-            //_stateMachine.Initialize(_stateMachine.IdleState);
+            _stateMachine = new BossStateMachine(this);
+            _stateMachine.Initialize(_stateMachine.IdleState);
             
             // Locomotion setting
             _animator.applyRootMotion = true;

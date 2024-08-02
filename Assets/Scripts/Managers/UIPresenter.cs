@@ -24,6 +24,11 @@ public class UIPresenter : MonoBehaviour
 
         _playerModel = FindFirstObjectByType<PlayerCharacter>();
         _playerHpBar = GameObject.Find("PlayerHpBar").GetComponent<Image>();
+        _playerIcon = GameObject.Find("PlayerProfile").transform
+            .Find("Icon")
+            .Find("Button")
+            .Find("Image")
+            .GetComponent<Image>();
     }
 
     private void Start()

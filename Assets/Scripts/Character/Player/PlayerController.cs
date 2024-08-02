@@ -1,6 +1,7 @@
 using System;
 using DG.Tweening;
 using INeverFall.Manager;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -45,7 +46,7 @@ namespace INeverFall.Player
         private float _verticalVelocity;
         
         // Jump
-        private bool _isGrounded;
+        public bool _isGrounded;
         private float _jumpTimeoutDelta;
         private float _fallTimeoutDelta;
         
@@ -76,18 +77,20 @@ namespace INeverFall.Player
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
 
-            float playerYPosition = transform.position.y;
-            float characterControllerBottom = playerYPosition - (_characterController.height / 2.0f) + _characterController.center.y;
-            GroundedOffset = _characterController.height * 0.1f;// (playerYPosition - characterControllerBottom);
-            GroundedRadius = 1; //_characterController.radius * 1.1f;
-
             _AddAnimationEvents();
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (!GameManager.Instance.IsGamePlaying) return;
+
+            // Player Random Pos
+            if (_playerInput.Jump)
+            {
+                transform.position = Vector3.zero;
+            }
             
+
             _Jump();
             _CheckGround();
 
@@ -109,14 +112,14 @@ namespace INeverFall.Player
                     _verticalVelocity = -2f;
                 }
 
-                // Jump
-                if (_playerInput.Jump && _jumpTimeoutDelta <= 0.0f)
-                {
-                    _animator.SetTrigger(AnimationID.Jump);
-                    
-                    // the square root of H * -2 * G = how much velocity needed to reach desired height
-                    _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
-                }
+                // // Jump
+                // if (_playerInput.Jump && _jumpTimeoutDelta <= 0.0f)
+                // {
+                //     // _animator.SetTrigger(AnimationID.Jump);
+                //     //
+                //     // // the square root of H * -2 * G = how much velocity needed to reach desired height
+                //     // _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);
+                // }
                 
                 // jump timeout
                 if (_jumpTimeoutDelta >= 0.0f)
@@ -150,10 +153,17 @@ namespace INeverFall.Player
         {
             _playerPosition.Set(transform.position.x, transform.position.y - GroundedOffset, transform.position.z);
             _isGrounded = Physics.CheckSphere(_playerPosition, GroundedRadius, GroundLayers, QueryTriggerInteraction.Ignore);
-            
             _animator.SetBool(AnimationID.IsGrounded, _isGrounded);
         }
 
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawWireSphere(_playerPosition, GroundedRadius);
+        }
+
+        public float SpeedOffset;
+        public float Groundddddd;
+        
         private void _MovePlayer()
         {
             if (_isAttacking)
@@ -163,33 +173,21 @@ namespace INeverFall.Player
                 return;
             }
             
-            if (_playerInput.CameraLocked)
+            // if (_playerInput.CameraLocked)
+            // {
+            //     //var camera = Object.FindFirstObjectByType<CameraSettings>().CurrentCamera;
+            //     //camera.GetComponentInChildren<CinemachineRotationComposer>().enabled = false;
+            // }
+            // else
             {
-                //var camera = Object.FindFirstObjectByType<CameraSettings>().CurrentCamera;
-                //camera.GetComponentInChildren<CinemachineRotationComposer>().enabled = false;
-            }
-            else
-            {
-                Vector3 movement;
-                Ray ray = new Ray(transform.position + Vector3.up * GroundedOffset * 0.5f, -Vector3.up); 
-                
-                if (Physics.Raycast(ray, out RaycastHit hit, GroundedOffset, Physics.AllLayers, QueryTriggerInteraction.Ignore))
-                {
-                    // ... and get the movement of the root motion rotated to lie along the plane of the ground.
-                    movement = Vector3.ProjectOnPlane(transform.position, hit.normal);
-                }
-                else
-                {
-                    movement = transform.position;
-                }
-                
+
                 float targetSpeed = _playerInput.Sprint ? SprintSpeed : MoveSpeed;
                 
                 if (_playerInput.Move == Vector2.zero) targetSpeed = 0.0f;
 
                 var controllerVelocity = _characterController.velocity;
                 float currentHorizontalSpeed = new Vector3(controllerVelocity.x, 0.0f, controllerVelocity.z).magnitude;
-                float speedOffset = 0.1f;
+                float speedOffset = SpeedOffset;
                 float inputMagnitude = _playerInput.Move.magnitude;
 
                 if (currentHorizontalSpeed < targetSpeed - speedOffset ||
@@ -237,9 +235,23 @@ namespace INeverFall.Player
                 
                 _animator.SetBool(AnimationID.IsMoving, _isMoving);
 
+                Vector3 movement = targetDirection.normalized *
+                                   (_speed * Time.deltaTime) +
+                                   new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime;
+                
+                // if (_isGrounded)
+                // {
+                     Ray ray = new Ray(_playerPosition, -Vector3.up);
+                     if (Physics.Raycast(ray, out RaycastHit hit, GroundedRadius, GroundLayers,
+                             QueryTriggerInteraction.Ignore))
+                     {
+                         // Get the movement of the player root rotated to lie along the plane of the ground.
+                         movement = Vector3.ProjectOnPlane(movement, hit.normal);
+                     }
+                // }
+                
                 // move the player
-                _characterController.Move(targetDirection.normalized * (_speed * Time.deltaTime) +
-                                 new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+                _characterController.Move(movement);
             }
         }
 

@@ -37,7 +37,7 @@ namespace INeverFall
 
         public void OnJump(InputValue value)
         {
-            //_jump = value.isPressed;
+            _jump = value.isPressed;
         }
 
         public void OnSprint(InputValue value)
