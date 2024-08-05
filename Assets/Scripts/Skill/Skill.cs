@@ -20,11 +20,6 @@ namespace INeverFall
             _collider = GetComponent<Collider>();
         }
 
-        protected virtual void Update()
-        {
-            
-        }
-
         public abstract void Initialize(CharacterBase attacker, int attackPower);
 
         protected void OnTriggerEnter(Collider other)
@@ -33,13 +28,16 @@ namespace INeverFall
             
             if (other.TryGetComponent<IDamageable>(out var character))
             {
-                if (_attacker == (CharacterBase)character)
+                if (_attacker == character as CharacterBase)
                 {
                     return;
                 }
                 
                 character.OnDamage(_attacker, _attackPower);
                 _isChecking = false;
+
+                _hitPoint = other.ClosestPoint(transform.position);
+                _OnDamage();
             }
         }
 
@@ -63,5 +61,9 @@ namespace INeverFall
         {
             _collider.enabled = false;
         }
+
+        protected Vector3 _hitPoint;
+
+        protected virtual void _OnDamage() { }
     }
 }

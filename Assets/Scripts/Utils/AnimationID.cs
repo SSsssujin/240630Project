@@ -27,6 +27,7 @@ namespace INeverFall.Monster
         public static readonly int IsMoving = Animator.StringToHash("IsMoving");
         public static readonly int AttackTrigger = Animator.StringToHash("AttackTrigger");
         public static readonly int DamageTrigger = Animator.StringToHash("DamageTrigger");
+        public static readonly int RiseTrigger = Animator.StringToHash("RiseTrigger");
         public static readonly int DeadTrigger = Animator.StringToHash("DeadTrigger");
         public static readonly int Attack = Animator.StringToHash("Attack");
         public static readonly int Damage = Animator.StringToHash("Damage");

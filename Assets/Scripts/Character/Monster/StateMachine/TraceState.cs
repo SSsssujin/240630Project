@@ -15,6 +15,8 @@ namespace INeverFall.Monster
             _controller = controller;
         }
 
+        private GameObject go;
+
         public void Enter()
         {
             _controller.Animator.SetBool(AnimationID.IsMoving, true);
@@ -46,22 +48,6 @@ namespace INeverFall.Monster
         private void _UpdatePosition()
         {
             _controller.NavMeshAgent.SetDestination(_controller.Target.transform.position);
-        }
-
-        private bool _HasReachedDestination()
-        {
-            var agent = _controller.NavMeshAgent;
-            if (!agent.pathPending)
-            {
-                if (agent.remainingDistance <= agent.stoppingDistance)
-                {
-                    if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
     }
 }

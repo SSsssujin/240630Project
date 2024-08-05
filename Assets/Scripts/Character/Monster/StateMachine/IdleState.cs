@@ -24,9 +24,28 @@ namespace INeverFall.Monster
             _randomTimer = Random.Range(0.5f, 1.0f);
         }
 
+        private bool _isPlayerEntered;
+
         // [보충] if문 없애고 깔끔하게 상태 전환 할 수 있는 방법 찾아보기
         public void Update()
         {
+            if (!PlayerChecker.Instance.IsPlayerInBossRoom)
+            {
+                return;
+            }
+            else if (!_isPlayerEntered)
+            {
+                _controller.Animator.SetTrigger(AnimationID.RiseTrigger);
+                _isPlayerEntered = true;
+            }
+            
+            // Wait for Rise animation
+            if ( _controller.Animator.IsSpecificAnimationPlaying("Stun_Loop") || 
+                 _controller.Animator.IsSpecificAnimationPlaying(BossAnimation.Rise))
+            {
+                return;
+            }
+            
             _entranceTimer += Time.deltaTime;
 
             if (_entranceTimer <= _randomTimer)

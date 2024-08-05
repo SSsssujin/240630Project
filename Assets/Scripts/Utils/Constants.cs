@@ -23,5 +23,7 @@ namespace INeverFall
         
         HitLeftShoulder,
         HitRightShoulder,
+        
+        Rise,
     }
 }

@@ -36,6 +36,12 @@ namespace INeverFall
 
             return null;
         }
+        
+        public static bool IsSpecificAnimationPlaying(this Animator animator, string animationName, int layerIndex = 0)
+        {
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(layerIndex);
+            return stateInfo.IsName(animationName);
+        }
 
         public static bool IsSpecificAnimationPlaying(this Animator animator, BossAnimation animationType, int layerIndex = 0)
         {

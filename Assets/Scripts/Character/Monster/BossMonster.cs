@@ -3,6 +3,7 @@ using System.Collections;
 using INeverFall.Manager;
 using INeverFall.Player;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.AI;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
@@ -73,6 +74,7 @@ namespace INeverFall.Monster
             // }
 
             StartCoroutine(nameof(_cDamageColor));
+
         }
         
         private IEnumerator _cDamageColor()
@@ -86,13 +88,18 @@ namespace INeverFall.Monster
         protected override void _OnDead()
         {
             _stateMachine.TransitionTo(_stateMachine.DeadState);
+            GameManager.Instance.GameOver(true);
         }
 
         private void _AddAnimationEvents()
         {
-            var animationClip = Utils.GetAnimationClipByType(_animator, BossAnimation.ThrowStone);
-            animationClip.AddAnimationEvent(nameof(_StoneCreated), 1.25f);
-            animationClip.AddAnimationEvent(nameof(_StoneThrown), 4.75f);
+            if (!GameManager.IsLoadCompleted)
+            {
+                var animationClip = Utils.GetAnimationClipByType(_animator, BossAnimation.ThrowStone);
+                animationClip.AddAnimationEvent(nameof(_StoneCreated), 1.25f);
+                animationClip.AddAnimationEvent(nameof(_StoneThrown), 4.75f);
+                GameManager.IsLoadCompleted = true;
+            }
         }
         
         private void _StoneCreated()
@@ -223,10 +230,9 @@ namespace INeverFall.Monster
             _animator.applyRootMotion = true;
             _navMeshAgent.updatePosition = false;
             _navMeshAgent.updateRotation = true;
-            
-            // Additional objects
+
             _AddAnimationEvents();
-            
+
             // Initialize variables
             _maxHp = _hp = 10000;
             _attackPower = 5;
@@ -244,13 +250,6 @@ namespace INeverFall.Monster
             rootPosition.y = _navMeshAgent.nextPosition.y;
             transform.position = rootPosition;
             _navMeshAgent.nextPosition = rootPosition;
-        }
-        
-        private void OnAnimatorIK(int layerIndex)
-        {
-            if (!_animator) return;
-
-            //_AdjustAttackingHandPosition();
         }
     }
 }

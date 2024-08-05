@@ -77,19 +77,21 @@ namespace INeverFall.Player
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
 
-            _AddAnimationEvents();
+
+            if (!GameManager.IsPlayerLoadCompleted)
+            {
+                _AddAnimationEvents();
+                GameManager.IsPlayerLoadCompleted = true;
+            }
         }
 
         private void FixedUpdate()
         {
-            if (!GameManager.Instance.IsGamePlaying) return;
-
-            // Player Random Pos
-            if (_playerInput.Jump)
+            if (!GameManager.Instance.IsGamePlaying)
             {
-                transform.position = Vector3.zero;
+                _ResetHorizontalVelocity();
+                return;
             }
-            
 
             _Jump();
             _CheckGround();
@@ -147,7 +149,6 @@ namespace INeverFall.Player
             }
         }
 
-        private Vector3 _playerPosition;
         
         private void _CheckGround()
         {
@@ -156,20 +157,15 @@ namespace INeverFall.Player
             _animator.SetBool(AnimationID.IsGrounded, _isGrounded);
         }
 
-        private void OnDrawGizmos()
-        {
-            Gizmos.DrawWireSphere(_playerPosition, GroundedRadius);
-        }
-
-        public float SpeedOffset;
-        public float Groundddddd;
+        private Vector3 _playerPosition;
+        public float SpeedOffset = 0.1f;
+        private bool _stillMoving;
         
         private void _MovePlayer()
         {
             if (_isAttacking)
             {
-                _animator.SetFloat(AnimationID.VelocityX,0);
-                _animator.SetFloat(AnimationID.VelocityZ,0);
+                _ResetHorizontalVelocity();
                 return;
             }
             
@@ -225,12 +221,15 @@ namespace INeverFall.Player
 
                     _animator.SetFloat(AnimationID.VelocityX, direction.x * _speed);
                     _animator.SetFloat(AnimationID.VelocityZ, direction.z * _speed);
-                    
+
+                    if (!_stillMoving)
+                        SoundManager.Instance.PlayAudio("Running");
+
+                    _stillMoving = true;
                 }
                 else
                 {
-                    _animator.SetFloat(AnimationID.VelocityX,0);
-                    _animator.SetFloat(AnimationID.VelocityZ,0);
+                    _ResetHorizontalVelocity();
                 }
                 
                 _animator.SetBool(AnimationID.IsMoving, _isMoving);
@@ -255,9 +254,21 @@ namespace INeverFall.Player
             }
         }
 
+        private void _ResetHorizontalVelocity()
+        {
+            _animator.SetFloat(AnimationID.VelocityX,0);
+            _animator.SetFloat(AnimationID.VelocityZ,0);
+
+            _stillMoving = false;
+            SoundManager.Instance.StopAudio("Running");
+        }
+
         private void _Attack()
         {
-            if (!_isGrounded) return;
+            // if (!_isGrounded)
+            // {
+            //     // return;
+            // }
             
             // Do Attack
             if (_playerInput.Attack && !_isAttacking)
@@ -341,6 +352,8 @@ namespace INeverFall.Player
             fx.GetComponent<Skill>().Initialize(_playerCharacter, _playerCharacter.AttackPower);
             fx.transform.position = effectTr.GetChild(skillId - 1).position;
             fx.transform.rotation = effectTr.GetChild(skillId - 1).rotation;
+            
+            SoundManager.Instance.PlayAudio("Skill" + skillNum);
         }   
     }
 }

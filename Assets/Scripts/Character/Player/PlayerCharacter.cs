@@ -25,6 +25,8 @@ namespace INeverFall.Player
             
             base.OnDamage(owner, damage);
             
+            SoundManager.Instance.PlayAudio("PlayerHit");
+            
             var currentHpRate = (float)_hp / _maxHp;
             HpChanged?.Invoke(currentHpRate);
             
@@ -61,8 +63,9 @@ namespace INeverFall.Player
         {
             _animator.SetTrigger(AnimationID.Death);
             PlayerDead?.Invoke();
+            GameManager.Instance.GameOver(false);
         }
-
+        
         public event Action PlayerDead;
         public event Action<float> HpChanged;
 

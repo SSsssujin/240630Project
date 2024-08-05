@@ -17,22 +17,32 @@ public class UIPresenter : MonoBehaviour
     [SerializeField] private Image _playerHpBar;
     [SerializeField] private Image _playerIcon;
 
-    private void OnValidate()
-    {
-        _bossModel = FindFirstObjectByType<BossMonster>();
-        _bossHpBar = GameObject.Find("BossHpBar").GetComponent<Slider>();
+    // private void OnValidate()
+    // {
+    //     _bossModel ??= FindFirstObjectByType<BossMonster>();
+    //     _bossHpBar ??= GameObject.Find("BossHpBar").GetComponent<Slider>();
+    //
+    //     _playerModel ??= FindFirstObjectByType<PlayerCharacter>();
+    //     _playerHpBar ??= GameObject.Find("PlayerHpBar").GetComponent<Image>();
+    //     _playerIcon ??= GameObject.Find("PlayerProfile").transform
+    //         .Find("Icon")
+    //         .Find("Button")
+    //         .Find("Image")
+    //         .GetComponent<Image>();
+    // }
 
-        _playerModel = FindFirstObjectByType<PlayerCharacter>();
-        _playerHpBar = GameObject.Find("PlayerHpBar").GetComponent<Image>();
-        _playerIcon = GameObject.Find("PlayerProfile").transform
+    private void Start()
+    {
+        _bossModel ??= FindFirstObjectByType<BossMonster>();
+        _bossHpBar ??= GameObject.Find("BossHpBar").GetComponent<Slider>();
+        _playerModel ??= FindFirstObjectByType<PlayerCharacter>();
+        _playerHpBar ??= GameObject.Find("PlayerHpBar").GetComponent<Image>();
+        _playerIcon ??= GameObject.Find("PlayerProfile").transform
             .Find("Icon")
             .Find("Button")
             .Find("Image")
             .GetComponent<Image>();
-    }
-
-    private void Start()
-    {
+        
         if (_bossModel is not null)
             _bossModel.HealthChanged += OnBossHpChanged;
 

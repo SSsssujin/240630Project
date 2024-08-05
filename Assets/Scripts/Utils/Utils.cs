@@ -52,6 +52,7 @@ namespace INeverFall
                 BossAnimation.ThrowStone => "atk_throwStone",
                 BossAnimation.HitLeftShoulder => "hit_left_shoulder",
                 BossAnimation.HitRightShoulder => "hit_right_shoulder",
+                BossAnimation.Rise => "Stun_End",
                 _ => throw new ArgumentOutOfRangeException(nameof(animation), animation, null)
             };
             return name;
@@ -84,4 +85,8 @@ namespace INeverFall
         public const int Environment = 10;
     }
 
+    public struct Tag
+    {
+        
+    }
 }

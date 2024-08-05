@@ -33,7 +33,7 @@ namespace INeverFall.Monster
         {
             _entranceTimer += Time.deltaTime;
 
-            if (!_controller.Animator.IsSpecificAnimationPlaying(BossAnimation.ThrowStone)
+            if (!_controller.Animator.IsSpecificAnimationPlaying(_animation)
                 && _entranceTimer > _controller.Animator.GetCurrentAnimationLength())
             {
                 _controller.StateMachine.TransitionTo(_controller.StateMachine.IdleState);

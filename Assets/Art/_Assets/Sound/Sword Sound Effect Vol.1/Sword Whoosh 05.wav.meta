@@ -1,0 +1,29 @@
+fileFormatVersion: 2
+guid: ee30a54c776c53c41b8e2ceb2e955cca
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 6
+  defaultSettings:
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 1
+    conversionMode: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 1
+  preloadAudioData: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 285758
+  packageName: Sword Sound Effect Vol.1
+  packageVersion: 1.0
+  assetPath: Assets/Sword Sound Effect Vol.1/Sword Whoosh 05.wav
+  uploadId: 666825

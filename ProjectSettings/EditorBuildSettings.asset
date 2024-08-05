@@ -4,7 +4,10 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Dungeon.unity
+    guid: 437ab3665143b1247b646c932ca4f696
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 707854497466ad2498f351ad728b0690, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: 5542b3f7ebe762c4fb2f77632e62c797, type: 2}

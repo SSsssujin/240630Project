@@ -11,13 +11,14 @@ namespace INeverFall.Monster
 
         private ParticleSystem _fx;
 
-        private void OnValidate()
+        private void Start()
         {
             _fx = GetComponent<ParticleSystem>();
         }
 
         public void ActivateEffect()
         {
+            _fx ??= GetComponent<ParticleSystem>();
             _fx.gameObject.SetActive(true);
             _fx.Play();
         }

@@ -32,7 +32,7 @@ namespace INeverFall
                 _OnDead();
             }
             
-            Debug.Log(this.GetType().Name + " Hp : " + _hp);
+            //Debug.Log(this.GetType().Name + " Hp : " + _hp);
         }
 
         protected virtual void _OnDead() { }

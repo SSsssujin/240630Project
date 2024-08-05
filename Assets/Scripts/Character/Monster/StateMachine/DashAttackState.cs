@@ -38,8 +38,8 @@ namespace INeverFall.Monster
             _controller.DeactivateEffect(_animation);
         }
 
-        protected override float CooldownTime { get; set; } = 10;
+        protected override float CooldownTime { get; set; } = 5;
 
-        public override bool IsReady => _isCoolTimeEnded && !_controller.IsTargetWithinDistance(_controller.AttackDistance);
+        public override bool IsReady => _isCoolTimeEnded; // && !_controller.IsTargetWithinDistance(_controller.AttackDistance);
     }
 }
